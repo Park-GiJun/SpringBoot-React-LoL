@@ -1,6 +1,6 @@
 package com.example.springbootreactlol.projection;
 
-public interface StatisticsProjection {
+public interface RankingProjection {
     String getNickname();
     String getMostChampion();
     Long getPlayedGames();

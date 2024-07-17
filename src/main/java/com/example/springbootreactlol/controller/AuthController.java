@@ -1,10 +1,9 @@
 package com.example.springbootreactlol.controller;
 
+import com.example.springbootreactlol.dto.LoginRequest;
 import com.example.springbootreactlol.entity.User;
 import com.example.springbootreactlol.security.JwtUtil;
 import com.example.springbootreactlol.service.UserService;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,18 +45,5 @@ public class AuthController {
     }
 }
 
-@Getter
-@Setter
-class LoginRequest {
-    private String username;
-    private String password;
-
-}
-
-@Getter
-class AuthResponse {
-    private final String jwt;
-    public AuthResponse(String jwt) {
-        this.jwt = jwt;
-    }
+record AuthResponse(String jwt) {
 }

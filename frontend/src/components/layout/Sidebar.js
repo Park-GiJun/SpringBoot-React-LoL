@@ -1,0 +1,131 @@
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Button from '../common/Button';
+import LoginModal from '../../features/auth/LoginModal';
+import RegisterModal from '../../features/auth/RegisterModal';
+
+function Sidebar() {
+    const [isOpen, setIsOpen] = useState(false);
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+    const [testResponse, setTestResponse] = useState('');
+    const [nickname, setNickname] = useState('');
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const toggleSidebar = () => setIsOpen(!isOpen);
+
+    const navItems = [
+        { path: '/', label: '홈' },
+        { path: '/stats', label: '전적 검색' },
+        { path: '/ranking', label: '기록실' },
+        { path: '/matches', label: '경기' },
+        { path: '/schedule', label: '게임 일정' },
+        { path: '/tournament', label: '토너먼트'},
+        { path: '/saveGame', label: '게임저장'}
+    ];
+
+    const handleTestButtonClick = async () => {
+        try {
+            const response = await axios.get('http://15.165.163.233:9832/public/test');
+            setTestResponse(response.data);
+        } catch (error) {
+            console.error('Error fetching test endpoint:', error);
+            setTestResponse('Error fetching test endpoint');
+        }
+    };
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (nickname.trim()) {
+            navigate(`/stats/${nickname}`);
+        }
+    };
+
+    return (
+        <>
+            <button
+                className="fixed top-4 left-4 z-20 p-2 bg-gray-800 text-white rounded-md lg:hidden"
+                onClick={toggleSidebar}
+            >
+                {isOpen ? '닫기' : '열기'}
+            </button>
+            <div className={`fixed lg:static top-0 left-0 h-screen max-h-screen bg-gray-900 text-gray-100 transition-all duration-300 ${isOpen ? 'w-64' : 'w-0 lg:w-64'} overflow-hidden flex flex-col`}>
+                <div className="p-4 text-2xl font-bold">OLM</div>
+                <form onSubmit={handleSearch} className="px-4 mb-1 relative">
+                    <input
+                        type="text"
+                        placeholder="닉네임 검색"
+                        value={nickname}
+                        onChange={(e) => setNickname(e.target.value)}
+                        className="w-full p-2 pr-10 rounded bg-gray-800 text-white"
+                    />
+                    <button
+                        type="submit"
+                        className="absolute right-6 top-1/2 transform -translate-y-1/2 focus:outline-none"
+                    >
+                        <svg fill="#ffffff" width="20px" height="20px" viewBox="0 0 490.4 490.4"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M484.1,454.796l-110.5-110.6c29.8-36.3,47.6-82.8,47.6-133.4c0-116.3-94.3-210.6-210.6-210.6S0,94.496,0,210.796 s94.3,210.6,210.6,210.6c50.8,0,97.4-18,133.8-48l110.5,110.5c12.9,11.8,25,4.2,29.2,0C492.5,475.596,492.5,463.096,484.1,454.796z M41.1,210.796c0-93.6,75.9-169.5,169.5-169.5s169.6,75.9,169.6,169.5s-75.9,169.5-169.5,169.5S41.1,304.396,41.1,210.796z"/>
+                        </svg>
+                    </button>
+                </form>
+                <nav className="flex-1 overflow-auto">
+                    <ul className="space-y-2 py-4">
+                        {navItems.map((item) => (
+                            <li key={item.path}>
+                                <Link
+                                    to={item.path}
+                                    className={`block px-4 py-2 hover:bg-gray-800 ${
+                                        location.pathname === item.path
+                                            ? 'bg-blue-600 text-white'
+                                            : ''
+                                    }`}
+                                >
+                                    {item.label}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
+                <div className="p-4 space-y-2">
+                    <Button
+                        onClick={() => setIsLoginModalOpen(true)}
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Login
+                    </Button>
+                    <Button
+                        onClick={() => setIsRegisterModalOpen(true)}
+                        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Register
+                    </Button>
+                    <Button
+                        onClick={handleTestButtonClick}
+                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Test API
+                    </Button>
+                    {testResponse && (
+                        <div className="mt-4 p-2 bg-gray-800 text-white rounded text-xs">
+                            {testResponse}
+                        </div>
+                    )}
+                </div>
+            </div>
+            <LoginModal
+                isOpen={isLoginModalOpen}
+                onClose={() => setIsLoginModalOpen(false)}
+            />
+            <RegisterModal
+                isOpen={isRegisterModalOpen}
+                onClose={() => setIsRegisterModalOpen(false)}
+            />
+        </>
+    );
+}
+
+export default Sidebar;
