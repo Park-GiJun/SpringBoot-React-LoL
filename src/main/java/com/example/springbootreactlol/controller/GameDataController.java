@@ -1,6 +1,7 @@
 package com.example.springbootreactlol.controller;
 
 import com.example.springbootreactlol.entity.GameData;
+import com.example.springbootreactlol.projection.MatchDateProjection;
 import com.example.springbootreactlol.projection.RankingProjection;
 import com.example.springbootreactlol.projection.StatisticsProjection;
 import com.example.springbootreactlol.service.GameDataService;
@@ -40,5 +41,10 @@ public class GameDataController {
     @GetMapping("/public/recent-games")
     public ResponseEntity<List<GameData>> publicRecentGames() {
         return ResponseEntity.ok(gameDataService.getRecentGame());
+    }
+
+    @GetMapping("/public/matchDate")
+    public ResponseEntity<List<MatchDateProjection>> publicMatchDate() {
+        return ResponseEntity.ok(gameDataService.getMatchDate());
     }
 }

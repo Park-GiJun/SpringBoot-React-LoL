@@ -38,3 +38,28 @@ code {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.react-calendar__tile .dot {
+  height: 8px;
+  width: 8px;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.react-calendar__tile {
+  color: #333;
+}
+
+.react-calendar__tile--now {
+  background: lightgreen !important;
+}
+
+.react-calendar__tile--weekend {
+  color: lightcoral !important;
+}
+
+.react-calendar__tile:enabled:hover {
+  background-color: #f0f0f0;
+}
+

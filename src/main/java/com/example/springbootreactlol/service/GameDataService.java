@@ -1,11 +1,13 @@
 package com.example.springbootreactlol.service;
 
 import com.example.springbootreactlol.entity.GameData;
+import com.example.springbootreactlol.projection.MatchDateProjection;
 import com.example.springbootreactlol.projection.RankingProjection;
 import com.example.springbootreactlol.projection.StatisticsProjection;
 import com.example.springbootreactlol.repository.GameDataRepository;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -27,6 +29,10 @@ public class GameDataService {
 
     public List<GameData> getRecentGame(){
         return gameDataRepository.findRecentGame();
+    }
+
+    public List<MatchDateProjection> getMatchDate(){
+        return gameDataRepository.findMatchDate();
     }
 
 }

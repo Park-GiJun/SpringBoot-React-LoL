@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Sidebar from './components/layout/Sidebar';
 import MainPage from './pages/MainPage';
+import Schedule from "./pages/Schedule";
 
 function App() {
     return (
@@ -13,7 +14,7 @@ function App() {
                     <main className="p-4 lg:p-6 overflow-auto">
                         <Routes>
                             <Route path="/" element={<MainPage />} />
-                            {/* 다른 라우트들... */}
+                            <Route path="/schedule" element={<Schedule />}/>
                         </Routes>
                     </main>
                 </div>

@@ -1,6 +1,7 @@
 package com.example.springbootreactlol.repository;
 
 import com.example.springbootreactlol.entity.GameData;
+import com.example.springbootreactlol.projection.MatchDateProjection;
 import com.example.springbootreactlol.projection.RankingProjection;
 import com.example.springbootreactlol.projection.StatisticsProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -73,4 +74,6 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
     @Query(value = "SELECT * FROM game_data ORDER BY id DESC LIMIT 10", nativeQuery = true)
     List<GameData> findRecentGame();
 
+    @Query(value = "SELECT DISTINCT DATE(game_data.date) as matchDate FROM game_data GROUP BY DATE(game_data.date) ORDER BY game_data.date desc", nativeQuery = true)
+    List<MatchDateProjection> findMatchDate();
 }

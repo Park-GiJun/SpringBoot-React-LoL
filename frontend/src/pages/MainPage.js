@@ -14,10 +14,10 @@ function MainPage() {
         const fetchData = async () => {
             try {
 
-                const rankingResponse = await axios.get('http://localhost:9832/public/ranking');
-                const statisticsResponse = await axios.get('http://localhost:9832/public/statistics');
-                const recentGamesResponse = await axios.get('http://localhost:9832/public/recent-games');
-                const announcementResponse = await axios.get('http://localhost:9832/public/announcement');
+                const rankingResponse = await axios.get('http://15.165.163.233:9832/public/ranking');
+                const statisticsResponse = await axios.get('http://15.165.163.233:9832/public/statistics');
+                const recentGamesResponse = await axios.get('http://15.165.163.233:9832/public/recent-games');
+                const announcementResponse = await axios.get('http://15.165.163.233:9832/public/announcement');
 
                 setAnnouncement(announcementResponse.data);
                 setRankings(rankingResponse.data);
