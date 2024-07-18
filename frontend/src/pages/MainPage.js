@@ -87,7 +87,7 @@ function MainPage() {
                 </ul>
             </div>
 
-            <div className="bg-gray-800 p-4 rounded-lg shadow overflow-auto max-h-[50vh] text-center">
+            <div className="bg-gray-800 p-4 rounded-lg shadow overflow-auto scrollbar-hide max-h-[49vh] text-center">
                 <h2 className="text-xl font-bold mb-2">랭킹</h2>
                 {rankings.length > 0 ? (
                     <div>
@@ -118,7 +118,7 @@ function MainPage() {
             <div className="bg-gray-800 p-4 rounded-lg shadow">
                 <h2 className="text-xl font-bold mb-4 text-center">통계</h2>
                 {statistics ? (
-                    <div className="grid grid-cols-2 gap-8 text-center">
+                    <div className="grid grid-cols-2 gap-6 text-center">
                         <div className="bg-gray-700 p-5 rounded-lg">
                             <h3 className="text-lg font-semibold mb-2">총 게임 수</h3>
                             <p className="text-2xl text-blue-400">{statistics.totalGamesPlayed}</p>
@@ -149,7 +149,7 @@ function MainPage() {
                 )}
             </div>
             <div className="bg-gray-800 p-4 rounded-lg shadow md:col-span-2 lg:col-span-3">
-                <h2 className="text-xl font-bold mb-4 text-center">최근 경기</h2>
+                <h2 className="text-xl font-bold mb-2 text-center">최근 경기</h2>
                 {recentGames.length > 0 ? (
                     Object.entries(recentGames.reduce((acc, game) => {
                         if (!acc[game.matchCode]) {
@@ -195,7 +195,7 @@ function MainPage() {
                                         })}
                                     </div>
                                 </div>
-                                <p className="text-center text-sm text-white mt-5">
+                                <p className="text-center text-sm text-white mt-2">
                                     {new Date(match.date).toLocaleString()}
                                 </p>
                             </div>
