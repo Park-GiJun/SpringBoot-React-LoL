@@ -7,6 +7,7 @@ import com.example.springbootreactlol.entity.User;
 import com.example.springbootreactlol.security.JwtUtil;
 import com.example.springbootreactlol.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,8 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+@Log4j2
 @RestController
-@RequestMapping("/api/auth")
 @Tag(name = "User", description = "User management APIs")
 public class UserController {
 
@@ -32,17 +33,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         final User user = userService.findByUsername(loginRequest.getUsername());
         final String jwt = jwtUtil.generateToken(user.getUsername());
 
+        log.info(new AuthResponse(jwt));
+
         return ResponseEntity.ok(new AuthResponse(jwt));
     }
 
-    @PostMapping("/register")
+    @PostMapping("/api/auth/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         return ResponseEntity.ok(userService.registerUser(user));
     }

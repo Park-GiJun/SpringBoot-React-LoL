@@ -22,7 +22,7 @@ public class UserService {
             throw new RuntimeException("Username is already taken");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(UserRole.USER); // 기본 역할을 USER로 설정
+        user.setRole(UserRole.USER);
         return userRepository.save(user);
     }
 
