@@ -5,6 +5,7 @@ import com.example.springbootreactlol.projection.MatchDateProjection;
 import com.example.springbootreactlol.projection.RankingProjection;
 import com.example.springbootreactlol.projection.StatisticsProjection;
 import com.example.springbootreactlol.service.GameDataService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@Tag(name = "Game Data", description = "Game Data management APIs")
 public class GameDataController {
 
 

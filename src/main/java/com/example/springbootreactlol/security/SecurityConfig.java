@@ -59,7 +59,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**", "/ws/**", "/public/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/ws/**", "/public/**", "/swagger-ui/**", "/api-docs/**").permitAll()
                         .requestMatchers("/api/user/**").hasRole(UserRole.USER.name())
                         .requestMatchers("/api/admin/**").hasRole(UserRole.ADMIN.name())
                         .requestMatchers("/api/master/**").hasRole(UserRole.MASTER.name())
