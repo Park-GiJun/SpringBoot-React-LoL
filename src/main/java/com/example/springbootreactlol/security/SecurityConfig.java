@@ -1,5 +1,6 @@
 package com.example.springbootreactlol.security;
 
+import com.example.springbootreactlol.data.UserRole;
 import com.example.springbootreactlol.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,6 +60,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/**", "/ws/**", "/public/**").permitAll()
+                        .requestMatchers("/api/user/**").hasRole(UserRole.USER.name())
+                        .requestMatchers("/api/admin/**").hasRole(UserRole.ADMIN.name())
+                        .requestMatchers("/api/master/**").hasRole(UserRole.MASTER.name())
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptions -> exceptions

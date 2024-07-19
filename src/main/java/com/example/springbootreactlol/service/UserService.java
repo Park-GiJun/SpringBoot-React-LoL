@@ -1,8 +1,8 @@
 package com.example.springbootreactlol.service;
 
+import com.example.springbootreactlol.data.UserRole;
 import com.example.springbootreactlol.entity.User;
 import com.example.springbootreactlol.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -23,11 +22,26 @@ public class UserService {
             throw new RuntimeException("Username is already taken");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(UserRole.USER); // 기본 역할을 USER로 설정
         return userRepository.save(user);
     }
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public User changeUserRole(String username, UserRole newRole) {
+        User user = findByUsername(username);
+        user.setRole(newRole);
+        return userRepository.save(user);
+    }
+
+    public boolean isAdmin(User user) {
+        return user.getRole() == UserRole.ADMIN || user.getRole() == UserRole.MASTER;
+    }
+
+    public boolean isMaster(User user) {
+        return user.getRole() == UserRole.MASTER;
     }
 }

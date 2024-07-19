@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:9090/api/auth/'; // 백엔드 서버 주소에 맞게 수정해주세요
+const API_URL = 'http://localhost:9832/api/auth/';
 
 export const login = async (username, password) => {
     try {
