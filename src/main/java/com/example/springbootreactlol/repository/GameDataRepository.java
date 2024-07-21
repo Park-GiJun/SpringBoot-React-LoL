@@ -2,11 +2,14 @@ package com.example.springbootreactlol.repository;
 
 import com.example.springbootreactlol.entity.GameData;
 import com.example.springbootreactlol.projection.MatchDateProjection;
+import com.example.springbootreactlol.projection.NicknameProjection;
 import com.example.springbootreactlol.projection.RankingProjection;
 import com.example.springbootreactlol.projection.StatisticsProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface GameDataRepository extends JpaRepository<GameData, Long> {
@@ -76,4 +79,10 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 
     @Query(value = "SELECT DISTINCT DATE(game_data.date) as matchDate FROM game_data GROUP BY DATE(game_data.date) ORDER BY game_data.date desc", nativeQuery = true)
     List<MatchDateProjection> findMatchDate();
+
+    @Query("SELECT g FROM GameData g WHERE FUNCTION('DATE', g.date) = FUNCTION('DATE', :date)")
+    List<GameData> findGamesByDatePattern(@Param("date") Instant date);
+
+    @Query(value = "SELECT nickName FROM game_data WHERE nickName LIKE CONCAT('%', :nickname, '%') GROUP BY nickName", nativeQuery = true)
+    List<NicknameProjection> similarNicknames(@Param("nickname") String nickname);
 }
