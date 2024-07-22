@@ -79,7 +79,7 @@ function SimpleGameSetup({ gameSettings }) {
     };
 
     const getPosition = (index) => {
-        const positions = ['TOP', 'JUNGLE', 'MID', 'ADC', 'SUPPORT'];
+        const positions = ['Top', 'Jungle', 'Mid', 'ADC', 'Support'];
         return positions[index];
     };
 
