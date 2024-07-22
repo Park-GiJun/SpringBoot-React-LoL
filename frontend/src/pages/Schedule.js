@@ -12,7 +12,7 @@ function App() {
     const [recentGames, setRecentGames] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:9832/public/matchDate')
+        axios.get('http://15.165.163.233:9832/public/matchDate')
             .then(response => {
                 const fetchedDates = response.data;
                 setDates(fetchedDates);
