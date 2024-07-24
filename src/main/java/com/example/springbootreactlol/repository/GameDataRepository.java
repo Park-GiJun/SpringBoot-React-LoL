@@ -1,10 +1,7 @@
 package com.example.springbootreactlol.repository;
 
 import com.example.springbootreactlol.entity.GameData;
-import com.example.springbootreactlol.projection.MatchDateProjection;
-import com.example.springbootreactlol.projection.NicknameProjection;
-import com.example.springbootreactlol.projection.RankingProjection;
-import com.example.springbootreactlol.projection.StatisticsProjection;
+import com.example.springbootreactlol.projection.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -85,4 +82,41 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 
     @Query(value = "SELECT nickName FROM game_data WHERE nickName LIKE CONCAT('%', :nickname, '%') GROUP BY nickName", nativeQuery = true)
     List<NicknameProjection> similarNicknames(@Param("nickname") String nickname);
+
+
+    @Query(value = "WITH MatchCodes AS (" +
+            "    SELECT DISTINCT match_code, team_color" +
+            "    FROM game_data" +
+            "    WHERE nickname = :nickname " +
+            ")," +
+            "     TeammateWinRates AS (" +
+            "         SELECT" +
+            "             gm.nickname," +
+            "             SUM(gm.winning) AS wins," +
+            "             COUNT(DISTINCT gm.match_code) AS total_matches," +
+            "             (SUM(gm.winning) * 1.0 / COUNT(DISTINCT gm.match_code)) AS win_rate" +
+            "         FROM" +
+            "             game_data gm" +
+            "                 JOIN" +
+            "             MatchCodes mc ON gm.match_code = mc.match_code AND gm.team_color = mc.team_color" +
+            "         WHERE" +
+            "             gm.nickname != :nickname " +
+            "         GROUP BY" +
+            "             gm.nickname" +
+            "     )" +
+            "SELECT" +
+            "    nickname AS player," +
+            "    ROUND(win_rate * 100, 2) AS winRate," +
+            "    total_matches AS played" +
+            " FROM" +
+            "    TeammateWinRates" +
+            " WHERE" +
+            "    total_matches > 3" +
+            " ORDER BY" +
+            "    winRate DESC," +
+            "    played DESC " +
+            " LIMIT 5", nativeQuery = true)
+    List<WithHighWinRateProjection> findWithHighWinRate(@Param("nickname") String nickname);
+
+
 }

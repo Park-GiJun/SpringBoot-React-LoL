@@ -1,10 +1,7 @@
 package com.example.springbootreactlol.service;
 
 import com.example.springbootreactlol.entity.GameData;
-import com.example.springbootreactlol.projection.MatchDateProjection;
-import com.example.springbootreactlol.projection.NicknameProjection;
-import com.example.springbootreactlol.projection.RankingProjection;
-import com.example.springbootreactlol.projection.StatisticsProjection;
+import com.example.springbootreactlol.projection.*;
 import com.example.springbootreactlol.repository.GameDataRepository;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +40,10 @@ public class GameDataService {
 
     public List<NicknameProjection> getAllNickname(String nickname){
         return gameDataRepository.similarNicknames(nickname);
+    }
+
+    public List<WithHighWinRateProjection> getHighestWinRatePlayer(String nickname){
+        return gameDataRepository.findWithHighWinRate(nickname);
     }
 
 }

@@ -2,10 +2,7 @@ package com.example.springbootreactlol.controller;
 
 import com.example.springbootreactlol.data.GameDataDTO;
 import com.example.springbootreactlol.entity.GameData;
-import com.example.springbootreactlol.projection.MatchDateProjection;
-import com.example.springbootreactlol.projection.NicknameProjection;
-import com.example.springbootreactlol.projection.RankingProjection;
-import com.example.springbootreactlol.projection.StatisticsProjection;
+import com.example.springbootreactlol.projection.*;
 import com.example.springbootreactlol.service.GameDataService;
 import com.example.springbootreactlol.service.GameService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -91,5 +88,10 @@ public class GameDataController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error saving game data: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/public/highWinRatePlayer")
+    public ResponseEntity<List<WithHighWinRateProjection>> findHighWinRatePlayer(@RequestParam String nickname) {
+        return ResponseEntity.ok(gameDataService.getHighestWinRatePlayer(nickname));
     }
 }
