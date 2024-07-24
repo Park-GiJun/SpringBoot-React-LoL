@@ -100,4 +100,9 @@ public class GameDataController {
     public ResponseEntity<List<ChampionStatProjection>> findChampionStat(@RequestParam String nickname){
         return ResponseEntity.ok(gameDataService.getChampionStat(nickname));
     }
+
+    @GetMapping("/public/searchByNickname")
+    public ResponseEntity<List<GameData>> searchByNickname(@RequestParam String nickname){
+        return ResponseEntity.ok(gameDataService.getGameDataByNickname(nickname));
+    }
 }

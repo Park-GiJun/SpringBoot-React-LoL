@@ -3,6 +3,7 @@ package com.example.springbootreactlol.repository;
 import com.example.springbootreactlol.entity.Champion;
 import com.example.springbootreactlol.entity.GameData;
 import com.example.springbootreactlol.projection.*;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -156,5 +157,6 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 """)
     List<ChampionStatProjection> findChampionStats(@Param("nickname") String nickname);
 
+    List<GameData> findByNicknameOrderByDateDesc(String nickname);
 
 }
