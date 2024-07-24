@@ -135,24 +135,24 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
     List<PositionWinRateProjection> findPositionWinRate(@Param("nickname") String nickname);
 
     @Query(nativeQuery = true, value = """
-    WITH ChampionStats AS (
-        SELECT champion,
-               position,
-               SUM(IF(winning = 1, 1, 0)) * 100.0 / COUNT(*) AS winRate,
-               AVG((kills + assists) * 1.0 / deaths) AS kda,
-               COUNT(*) AS totalGames
-        FROM game_data
-        WHERE nickname = :nickname
-        GROUP BY champion, position
-    )
-    SELECT champion,
-           position,
-           CONCAT(ROUND(winRate, 2), '%') AS winRate,
-           ROUND(kda, 1) AS kda,
-           totalGames
-    FROM ChampionStats
-    ORDER BY totalGames DESC, winRate
-    LIMIT 5
+   WITH ChampionStats AS (
+               SELECT champion,
+                      position,
+                      SUM(IF(winning = 1, 1, 0)) * 100.0 / COUNT(*) AS winRate,
+                      (SUM(kills) + SUM(assists)) / SUM(deaths) AS kda,
+                      COUNT(*) AS totalGames
+               FROM game_data
+               WHERE nickname = :nickname
+               GROUP BY champion, position
+           )
+           SELECT champion,
+                  position,
+                  ROUND(winRate, 2) AS winRate,
+                  ROUND(kda, 2) AS kda,
+                  totalGames
+           FROM ChampionStats
+           ORDER BY totalGames DESC, winRate DESC
+           
 """)
     List<ChampionStatProjection> findChampionStats(@Param("nickname") String nickname);
 
