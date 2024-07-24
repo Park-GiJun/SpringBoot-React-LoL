@@ -46,4 +46,12 @@ public class GameDataService {
         return gameDataRepository.findWithHighWinRate(nickname);
     }
 
+    public List<PositionWinRateProjection> getPositionWinRate(String nickname){
+        return gameDataRepository.findPositionWinRate(nickname);
+    }
+
+    public List<ChampionStatProjection> getChampionStat(String nickname){
+        return gameDataRepository.findChampionStats(nickname);
+    }
+
 }

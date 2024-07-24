@@ -1,21 +1,17 @@
 package com.example.springbootreactlol.controller;
 
-import com.example.springbootreactlol.data.GameDataDTO;
 import com.example.springbootreactlol.entity.GameData;
 import com.example.springbootreactlol.projection.*;
 import com.example.springbootreactlol.service.GameDataService;
 import com.example.springbootreactlol.service.GameService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.expression.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -93,5 +89,15 @@ public class GameDataController {
     @GetMapping("/public/highWinRatePlayer")
     public ResponseEntity<List<WithHighWinRateProjection>> findHighWinRatePlayer(@RequestParam String nickname) {
         return ResponseEntity.ok(gameDataService.getHighestWinRatePlayer(nickname));
+    }
+
+    @GetMapping("/public/positionWinRate")
+    public ResponseEntity<List<PositionWinRateProjection>> findPositionWinRate(@RequestParam String nickname){
+        return ResponseEntity.ok(gameDataService.getPositionWinRate(nickname));
+    }
+
+    @GetMapping("/public/championStat")
+    public ResponseEntity<List<ChampionStatProjection>> findChampionStat(@RequestParam String nickname){
+        return ResponseEntity.ok(gameDataService.getChampionStat(nickname));
     }
 }
