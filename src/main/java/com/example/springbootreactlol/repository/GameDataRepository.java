@@ -116,9 +116,11 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
             "    total_matches > 3" +
             " ORDER BY" +
             "    winRate DESC," +
-            "    played DESC " +
-            " LIMIT 5", nativeQuery = true)
+            "    played DESC ", nativeQuery = true)
     List<WithHighWinRateProjection> findWithHighWinRate(@Param("nickname") String nickname);
+
+    @Query("select g from GameData g where g.matchCode = ?1")
+    List<GameData> findByMatchCode(String matchCode);
 
     @Query(value = "WITH PositionStats AS ( " +
             "                SELECT position, " +

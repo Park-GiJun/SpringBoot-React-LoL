@@ -58,4 +58,8 @@ public class GameDataService {
         return gameDataRepository.findByNicknameOrderByDateDesc(nickname);
     }
 
+    public List<GameData> getGameData(String matchCode){
+        return gameDataRepository.findByMatchCode(matchCode);
+    }
+
 }

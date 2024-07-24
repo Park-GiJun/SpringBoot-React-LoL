@@ -101,7 +101,6 @@ function SimpleGameSetup({ gameSettings }) {
         <div className="bg-gray-800 p-6 rounded-lg">
             {games.map((game, gameIndex) => (
                 <div key={gameIndex} className="mb-8">
-                    {/* ... */}
                     <div className="grid grid-cols-2 gap-4 mb-4">
                         {['blue', 'red'].map((color) => (
                             <div key={color} className="bg-gray-700 p-4 rounded-lg">
