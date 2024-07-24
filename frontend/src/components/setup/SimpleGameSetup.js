@@ -2,6 +2,13 @@ import React, {useState} from 'react';
 import AutocompleteChampionInput from "../common/AutocompleteChampionInput";
 import axios from "axios";
 
+function getKoreanISOString() {
+    const now = new Date();
+    const koreaTimeDiff = 9 * 60 * 60 * 1000; // 9 hours in milliseconds
+    const koreanDate = new Date(now.getTime() + koreaTimeDiff);
+    return koreanDate.toISOString();
+}
+
 function SimpleGameSetup({ gameSettings }) {
     const { rounds, teamA, teamB } = gameSettings;
     const [games, setGames] = useState(Array(rounds).fill().map((_, index) => ({
@@ -13,7 +20,7 @@ function SimpleGameSetup({ gameSettings }) {
         redBans: Array(5).fill(''),
     })));
     const [winners, setWinners] = useState(Array(rounds).fill(null));
-
+    const koreanISOString = getKoreanISOString();
     const handleInputChange = (gameIndex, team, playerIndex, field, value) => {
         setGames(prevGames => {
             const newGames = [...prevGames];
@@ -48,7 +55,7 @@ function SimpleGameSetup({ gameSettings }) {
                 teamColor: 'blue',
                 position: getPosition(index),
                 winning: blueTeamWin,
-                date: new Date().toISOString(),
+                date: koreanISOString,
             }));
 
             const redTeamData = game.redTeamData.map((player, index) => ({
@@ -56,19 +63,19 @@ function SimpleGameSetup({ gameSettings }) {
                 teamColor: 'red',
                 position: getPosition(index),
                 winning: redTeamWin,
-                date: new Date().toISOString(),
+                date: koreanISOString,
             }));
 
             const blueBans = game.blueBans.map(champion => ({
                 champion,
                 teamColor: 'blue',
-                date: new Date().toISOString(),
+                date: koreanISOString,
             }));
 
             const redBans = game.redBans.map(champion => ({
                 champion,
                 teamColor: 'red',
-                date: new Date().toISOString(),
+                date: koreanISOString,
             }));
 
             return {

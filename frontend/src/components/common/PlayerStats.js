@@ -18,10 +18,10 @@ const PlayerStats = ({ nickname }) => {
             setIsLoading(true);
             try {
                 const [highWinRateRes, positionWinRateRes, championStatRes, recentGamesRes] = await Promise.all([
-                    axios.get(`http://localhost:9832/public/highWinRatePlayer?nickname=${nickname}`),
-                    axios.get(`http://localhost:9832/public/positionWinRate?nickname=${nickname}`),
-                    axios.get(`http://localhost:9832/public/championStat?nickname=${nickname}`),
-                    axios.get(`http://localhost:9832/public/searchByNickname?nickname=${nickname}`)
+                    axios.get(`http://15.165.163.233:9832/public/highWinRatePlayer?nickname=${nickname}`),
+                    axios.get(`http://15.165.163.233:9832/public/positionWinRate?nickname=${nickname}`),
+                    axios.get(`http://15.165.163.233:9832/public/championStat?nickname=${nickname}`),
+                    axios.get(`http://15.165.163.233:9832/public/searchByNickname?nickname=${nickname}`)
                 ]);
 
                 setHighWinRatePlayers(highWinRateRes.data);
@@ -43,7 +43,7 @@ const PlayerStats = ({ nickname }) => {
     const handleMatchClick = async (matchCode) => {
         setIsLoading(true);
         try {
-            const response = await axios.get(`http://localhost:9832/public/searchByMatchCode?matchCode=${matchCode}`);
+            const response = await axios.get(`http://15.165.163.233:9832/public/searchByMatchCode?matchCode=${matchCode}`);
             setSelectedMatch(response.data);
             setIsModalOpen(true);
         } catch (error) {
