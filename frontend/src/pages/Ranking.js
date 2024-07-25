@@ -7,20 +7,29 @@ function ChampionTierList() {
     const [orderBy, setOrderBy] = useState('winRate');
     const [order, setOrder] = useState('desc');
     const [loading, setLoading] = useState(true);
+    const [version, setVersion] = useState('');
 
     useEffect(() => {
-        fetchChampionData();
+        fetchVersionAndChampionData();
     }, []);
 
-    const fetchChampionData = async () => {
+    const fetchVersionAndChampionData = async () => {
         try {
+            const versionResponse = await axios.get('https://ddragon.leagueoflegends.com/api/versions.json');
+            const latestVersion = versionResponse.data[0];
+            setVersion(latestVersion);
+
             const response = await axios.get('http://15.165.163.233:9832/public/tierList');
             setChampions(response.data);
             setLoading(false);
         } catch (error) {
-            console.error('Error fetching champion data:', error);
+            console.error('Error fetching data:', error);
             setLoading(false);
         }
+    };
+
+    const getChampionIconUrl = (championEnglish) => {
+        return `http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${championEnglish}.png`;
     };
 
     const handleRequestSort = (property) => {
@@ -67,10 +76,11 @@ function ChampionTierList() {
     }
 
     return (
-        <div className="overflow-x-auto bg-gray-900 rounded-lg shadow ">
+        <div className="overflow-x-auto bg-gray-900 rounded-lg shadow">
             <table className="min-w-full divide-y divide-gray-700">
                 <thead className="bg-gray-800">
                 <tr>
+                    <th className="px-6 py-3 text-xs font-medium text-gray-300 uppercase tracking-wider">Icon</th>
                     {['Champion', 'Tier', 'Win Rate', 'Played', 'KDA', 'Most Played By', 'Players Count', 'Ban Rate'].map((header, index) => (
                         <th
                             key={index}
@@ -92,6 +102,13 @@ function ChampionTierList() {
                 <tbody className="bg-gray-900 divide-y divide-gray-700">
                 {sortedChampions.map((champion) => (
                     <tr key={champion.champion} className="hover:bg-gray-800">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                            <img
+                                src={getChampionIconUrl(champion.championEnglish)}
+                                alt={champion.champion}
+                                className="w-12 h-12 rounded-full"
+                            />
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 text-center">{champion.champion}</td>
                         <td className={`px-6 py-4 whitespace-nowrap text-sm text-white font-medium ${getTierColor(champion.tier)} text-center`}>
                             {champion.tier}

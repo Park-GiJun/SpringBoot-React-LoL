@@ -159,7 +159,11 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
             """)
     List<ChampionStatProjection> findChampionStats(@Param("nickname") String nickname);
 
-    List<GameData> findByNicknameOrderByDateDesc(String nickname);
+
+    @Query(value = """
+SELECT * from game_data g LEFT JOIN champion c on g.champion = c.champion WHERE g.nickname = :nickname
+""", nativeQuery = true)
+    List<RecentMatchListProjection> findByNicknameOrderByDateDesc(String nickname);
 
     @Query(value = """
             SELECT
@@ -170,7 +174,8 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
                 ranked_data.tier AS tier,
                 most_player.nickname AS mostPlayedBy,
                 ranked_data.playersCount AS playersCount,
-                ROUND(COALESCE(ban_data.banRate, 0), 2) AS banRate
+                ROUND(COALESCE(ban_data.banRate, 0), 2) AS banRate,
+                championEnglish
             FROM (
                      SELECT
                          g.champion AS champion,
@@ -235,6 +240,8 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
                 FROM ban
                 GROUP BY ban_champion
             ) AS ban_data ON ban_data.ban_champion = ranked_data.champion
+                     LEFT JOIN champion ch
+                               On ch.champion = ranked_data.champion
             ORDER BY
                 CASE
                     WHEN ranked_data.tier = 'Tier 1' THEN 1

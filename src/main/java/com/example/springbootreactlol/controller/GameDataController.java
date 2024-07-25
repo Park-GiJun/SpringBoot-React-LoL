@@ -102,7 +102,7 @@ public class GameDataController {
     }
 
     @GetMapping("/public/searchByNickname")
-    public ResponseEntity<List<GameData>> searchByNickname(@RequestParam String nickname){
+    public ResponseEntity<List<RecentMatchListProjection>> searchByNickname(@RequestParam String nickname){
         return ResponseEntity.ok(gameDataService.getGameDataByNickname(nickname));
     }
 

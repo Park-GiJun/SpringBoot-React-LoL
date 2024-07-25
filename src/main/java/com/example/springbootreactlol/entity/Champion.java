@@ -17,7 +17,7 @@ public class Champion {
     @Column(name = "champion", nullable = false)
     private String champion;
 
-    @Column(name = "champion_eng", length = 50)
-    private String championEng;
+    @Column(name = "championEnglish", length = 50)
+    private String championEnglish;
 
 }

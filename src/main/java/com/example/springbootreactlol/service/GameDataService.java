@@ -54,7 +54,7 @@ public class GameDataService {
         return gameDataRepository.findChampionStats(nickname);
     }
 
-    public List<GameData> getGameDataByNickname(String nickname){
+    public List<RecentMatchListProjection> getGameDataByNickname(String nickname){
         return gameDataRepository.findByNicknameOrderByDateDesc(nickname);
     }
 

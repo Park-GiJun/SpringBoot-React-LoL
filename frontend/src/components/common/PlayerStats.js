@@ -12,11 +12,16 @@ const PlayerStats = ({ nickname }) => {
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [version, setVersion] = useState('');
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchVersionAndData = async () => {
             setIsLoading(true);
             try {
+                const versionResponse = await axios.get('https://ddragon.leagueoflegends.com/api/versions.json');
+                const latestVersion = versionResponse.data[0];
+                setVersion(latestVersion);
+
                 const [highWinRateRes, positionWinRateRes, championStatRes, recentGamesRes] = await Promise.all([
                     axios.get(`http://15.165.163.233:9832/public/highWinRatePlayer?nickname=${nickname}`),
                     axios.get(`http://15.165.163.233:9832/public/positionWinRate?nickname=${nickname}`),
@@ -36,9 +41,13 @@ const PlayerStats = ({ nickname }) => {
         };
 
         if(nickname){
-            fetchData();
+            fetchVersionAndData();
         }
     }, [nickname]);
+
+    const getChampionIconUrl = (championName) => {
+        return `http://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${championName}.png`;
+    };
 
     const handleMatchClick = async (matchCode) => {
         setIsLoading(true);
@@ -57,19 +66,19 @@ const PlayerStats = ({ nickname }) => {
         return <LoadingSpinner />;
     }
 
-    const StatSection = ({ title, data, headers, renderRow }) => (
+    const StatSection = ({ title, data, headers, renderRow, columns = 3 }) => (
         <div className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow flex flex-col h-full max-h-[280px]">
             <h2 className="text-lg sm:text-xl font-bold mb-2 text-center">{title}</h2>
             {data.length > 0 ? (
                 <div className="flex-grow flex flex-col overflow-hidden">
-                    <div className="grid grid-cols-3 gap-1 sm:gap-2 mb-2 text-xs sm:text-sm sticky top-0 bg-gray-800">
+                    <div className={`grid grid-cols-${columns} gap-1 sm:gap-2 mb-2 text-xs sm:text-sm sticky top-0 bg-gray-800`}>
                         {headers.map((header, index) => (
                             <div key={index} className="font-semibold">{header}</div>
                         ))}
                     </div>
                     <div className="overflow-y-auto flex-grow">
                         {data.map((item, index) => (
-                            <div key={index} className="grid grid-cols-3 gap-1 sm:gap-2 border-t border-gray-700 py-1 sm:py-2 text-xs">
+                            <div key={index} className={`grid grid-cols-${columns} gap-1 sm:gap-2 border-t border-gray-700 py-1 sm:py-2 text-xs`}>
                                 {renderRow(item)}
                             </div>
                         ))}
@@ -96,6 +105,7 @@ const PlayerStats = ({ nickname }) => {
                         </>
                     )}
                 />
+
                 <StatSection
                     title="포지션별 승률"
                     data={positionWinRates}
@@ -108,15 +118,19 @@ const PlayerStats = ({ nickname }) => {
                         </>
                     )}
                 />
+
                 <StatSection
                     title="챔피언 통계"
                     data={championStats}
-                    headers={["챔피언", "포지션", "승률"]}
+                    headers={["챔피언", "포지션", "KDA", "승률", "게임 수"]}
+                    columns={5}
                     renderRow={(champion) => (
                         <>
                             <div className="truncate" title={champion.champion}>{champion.champion}</div>
                             <div>{champion.position}</div>
-                            <div>{champion.winRate}</div>
+                            <div>{champion.kda}</div>
+                            <div>{champion.winRate}%</div>
+                            <div>{champion.totalGames}</div>
                         </>
                     )}
                 />
@@ -140,7 +154,14 @@ const PlayerStats = ({ nickname }) => {
                                 className={`cursor-pointer ${game.winning === 1 ? 'bg-blue-600' : 'bg-red-600'}`}
                                 onClick={() => handleMatchClick(game.matchCode)}
                             >
-                                <td className="py-2 pl-2">{game.champion}</td>
+                                <td className="py-2 pl-2 flex items-center">
+                                    <img
+                                        src={getChampionIconUrl(game.championEnglish)}
+                                        alt={game.champion}
+                                        className="w-8 h-8 rounded-full mr-2"
+                                    />
+                                    {game.champion}
+                                </td>
                                 <td className="py-2">{game.position}</td>
                                 <td className="py-2">{game.kills}/{game.deaths}/{game.assists}</td>
                                 <td className="py-2 pr-2">{new Date(game.date).toLocaleDateString()}</td>

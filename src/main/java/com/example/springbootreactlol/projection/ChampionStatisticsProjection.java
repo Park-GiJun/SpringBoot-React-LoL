@@ -9,4 +9,5 @@ public interface ChampionStatisticsProjection {
     String getMostPlayedBy();
     Integer getPlayersCount();
     Double getBanRate();
+    String getChampionEnglish();
 }
