@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import AutocompleteChampionInput from "../common/AutocompleteChampionInput";
 import axios from "axios";
+import AutoCompleteNicknameInput from "../common/AutocompleteNicknameInput";
 
 function getKoreanISOString() {
     const now = new Date();
@@ -14,11 +15,24 @@ function SimpleGameSetup({ gameSettings }) {
     const [games, setGames] = useState(Array(rounds).fill().map((_, index) => ({
         blueTeam: index % 2 === 0 ? teamA : teamB,
         redTeam: index % 2 === 0 ? teamB : teamA,
-        blueTeamData: Array(5).fill().map(() => ({ nickname: '', champion: '', kills: 0, deaths: 0, assists: 0 })),
-        redTeamData: Array(5).fill().map(() => ({ nickname: '', champion: '', kills: 0, deaths: 0, assists: 0 })),
+        blueTeamData: Array(5).fill().map((_, i) => ({
+            nickname: index % 2 === 0 ? teamA[i] : teamB[i],
+            champion: '',
+            kills: 0,
+            deaths: 0,
+            assists: 0
+        })),
+        redTeamData: Array(5).fill().map((_, i) => ({
+            nickname: index % 2 === 0 ? teamB[i] : teamA[i],
+            champion: '',
+            kills: 0,
+            deaths: 0,
+            assists: 0
+        })),
         blueBans: Array(5).fill(''),
         redBans: Array(5).fill(''),
     })));
+
     const [winners, setWinners] = useState(Array(rounds).fill(null));
     const koreanISOString = getKoreanISOString();
     const handleInputChange = (gameIndex, team, playerIndex, field, value) => {
@@ -43,6 +57,10 @@ function SimpleGameSetup({ gameSettings }) {
         const newWinners = [...winners];
         newWinners[gameIndex] = winner;
         setWinners(newWinners);
+    };
+
+    const handleNicknameSelect = (gameIndex, team, playerIndex, value) => {
+        handleInputChange(gameIndex, team, playerIndex, 'nickname', value);
     };
 
     const transformGameData = () => {
@@ -133,12 +151,12 @@ function SimpleGameSetup({ gameSettings }) {
                                 <h3 className="text-white font-bold mb-2">{team === 'blueTeam' ? '블루팀' : '레드팀'}</h3>
                                 {game[`${team}Data`].map((player, playerIndex) => (
                                     <div key={playerIndex} className="grid grid-cols-5 gap-2 mb-2">
-                                        <input
-                                            type="text"
-                                            className="bg-gray-600 text-white p-1 rounded"
+                                        <AutoCompleteNicknameInput
                                             value={player.nickname}
-                                            onChange={(e) => handleInputChange(gameIndex, team, playerIndex, 'nickname', e.target.value)}
+                                            onChange={(value) => handleNicknameSelect(gameIndex, team, playerIndex, value)}
                                             placeholder="닉네임"
+                                            onSelectNext={() => {
+                                            }}
                                         />
                                         <AutocompleteChampionInput
                                             value={player.champion}

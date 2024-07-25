@@ -62,4 +62,8 @@ public class GameDataService {
         return gameDataRepository.findByMatchCode(matchCode);
     }
 
+    public List<ChampionStatisticsProjection> getTierList(){
+        return gameDataRepository.findChampionStatistics();
+    }
+
 }

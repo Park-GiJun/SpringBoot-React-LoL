@@ -10,7 +10,6 @@ function TournamentSetupModal({ teamCount, onSetup }) {
     };
 
     const generateBracket = () => {
-        // 간단한 대진표 생성 로직 (실제 구현시 더 복잡할 수 있습니다)
         const shuffled = [...Array(teamCount).keys()].sort(() => Math.random() - 0.5);
         const bracket = [];
         for (let i = 0; i < shuffled.length; i += 2) {

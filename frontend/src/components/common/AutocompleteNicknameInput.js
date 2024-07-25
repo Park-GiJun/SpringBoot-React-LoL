@@ -69,15 +69,15 @@ function AutoCompleteNicknameInput({ value, onChange, placeholder, onSelectNext 
                 onFocus={() => setIsOpen(true)}
                 onBlur={handleBlur}
                 placeholder={placeholder}
-                className="w-full p-2 border rounded text-black"
+                className="w-full p-2 rounded bg-gray-600 text-white"
             />
             {isOpen && suggestions.length > 0 && (
-                <ul className="absolute z-10 w-full bg-white border border-gray-300 mt-1 max-h-60 overflow-auto">
+                <ul className="absolute z-10 w-full bg-gray-700 border border-gray-600 mt-1 max-h-60 overflow-auto">
                     {suggestions.map((suggestion, index) => (
                         <li
                             key={index}
-                            className={`p-2 hover:bg-gray-100 cursor-pointer text-black ${
-                                index === highlightedIndex ? 'bg-blue-200' : ''
+                            className={`p-2 hover:bg-gray-600 cursor-pointer text-white ${
+                                index === highlightedIndex ? 'bg-gray-500' : ''
                             }`}
                             onClick={() => handleSelect(suggestion.nickname)}
                             onMouseEnter={() => setHighlightedIndex(index)}
