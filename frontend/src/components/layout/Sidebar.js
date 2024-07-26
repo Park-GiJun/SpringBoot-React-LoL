@@ -5,6 +5,9 @@ import Button from '../common/Button';
 import LoginModal from '../../features/auth/LoginModal';
 import RegisterModal from '../../features/auth/RegisterModal';
 
+// TODO : 로그인시 로그인버튼, 회원가입 버튼 안보이고 로그 아웃 버튼으로 대체, 사이드바에서 현재 로그인한 닉네임, 포인트 출력
+
+
 function Sidebar({ isOpen, setIsOpen }) {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
