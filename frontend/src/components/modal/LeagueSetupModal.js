@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AutoCompleteNicknameInput from "../common/AutocompleteNicknameInput";
 
 function LeagueSetupModal({ teamCount, onSetup }) {
     const [teams, setTeams] = useState(Array(teamCount).fill().map(() => Array(5).fill('')));
@@ -10,7 +11,16 @@ function LeagueSetupModal({ teamCount, onSetup }) {
     };
 
     const handleSubmit = () => {
-        onSetup(teams);
+        onSetup({ teams: teams });
+    };
+
+
+    const handleSelectNext = (teamIndex, playerIndex) => {
+        if (playerIndex < 4) {
+            document.querySelector(`input[name="team${teamIndex}player${playerIndex + 1}"]`)?.focus();
+        } else if (teamIndex < teamCount - 1) {
+            document.querySelector(`input[name="team${teamIndex + 1}player0"]`)?.focus();
+        }
     };
 
     return (
@@ -20,13 +30,13 @@ function LeagueSetupModal({ teamCount, onSetup }) {
                 <div key={teamIndex} className="mb-4">
                     <h3 className="font-bold mb-2">팀 {teamIndex + 1}</h3>
                     {team.map((player, playerIndex) => (
-                        <input
+                        <AutoCompleteNicknameInput
                             key={playerIndex}
-                            type="text"
                             value={player}
-                            onChange={(e) => handlePlayerChange(teamIndex, playerIndex, e.target.value)}
+                            onChange={(value) => handlePlayerChange(teamIndex, playerIndex, value)}
                             placeholder={`플레이어 ${playerIndex + 1}`}
-                            className="w-full p-2 border rounded mb-2"
+                            onSelectNext={() => handleSelectNext(teamIndex, playerIndex)}
+                            name={`team${teamIndex}player${playerIndex}`}
                         />
                     ))}
                 </div>

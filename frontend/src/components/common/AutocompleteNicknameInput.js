@@ -59,7 +59,7 @@ function AutoCompleteNicknameInput({ value, onChange, placeholder, onSelectNext 
     };
 
     return (
-        <div className="relative">
+        <div className="relative mb-2">
             <input
                 ref={inputRef}
                 type="text"
