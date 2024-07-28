@@ -161,7 +161,7 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
 
 
     @Query(value = """
-SELECT * from game_data g LEFT JOIN champion c on g.champion = c.champion WHERE g.nickname = :nickname
+SELECT * from game_data g LEFT JOIN champion c on g.champion = c.champion WHERE g.nickname = :nickname ORDER BY DATE DESC
 """, nativeQuery = true)
     List<RecentMatchListProjection> findByNicknameOrderByDateDesc(String nickname);
 

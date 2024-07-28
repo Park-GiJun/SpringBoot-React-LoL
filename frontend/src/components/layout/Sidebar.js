@@ -11,6 +11,8 @@ function Sidebar({ isOpen, setIsOpen }) {
     const [testResponse, setTestResponse] = useState('');
     const [nickname, setNickname] = useState('');
     const [isMobile, setIsMobile] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userPoints, setUserPoints] = useState(0);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -20,8 +22,34 @@ function Sidebar({ isOpen, setIsOpen }) {
         };
         checkMobile();
         window.addEventListener('resize', checkMobile);
+        checkLoginStatus();
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            fetchUserPoints();
+        }
+    }, [isLoggedIn]);
+
+    const checkLoginStatus = () => {
+        const token = localStorage.getItem('token');
+        setIsLoggedIn(!!token);
+    };
+
+    const fetchUserPoints = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://15.165.163.233:9832/api/user/points', {
+                headers: {
+                    Authorization: token
+                }
+            });
+            setUserPoints(response.data);
+        } catch (error) {
+            console.error('Error fetching user points:', error);
+        }
+    };
 
     const toggleNavigation = () => setIsOpen(!isOpen);
 
@@ -49,6 +77,53 @@ function Sidebar({ isOpen, setIsOpen }) {
         e.preventDefault();
         if (nickname.trim()) {
             navigate(`/stats/${nickname}`);
+        }
+    };
+
+    const handleLoginSuccess = () => {
+        setIsLoggedIn(true);
+        setIsLoginModalOpen(false);
+        fetchUserPoints();
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setIsLoggedIn(false);
+        setUserPoints(0);
+    };
+
+    const renderAuthButton = () => {
+        if (isLoggedIn) {
+            return (
+                <>
+                    <div className="text-center mb-2">
+                        <p>포인트: {userPoints}</p>
+                    </div>
+                    <Button
+                        onClick={handleLogout}
+                        className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Logout
+                    </Button>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <Button
+                        onClick={() => setIsLoginModalOpen(true)}
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Login
+                    </Button>
+                    <Button
+                        onClick={() => setIsRegisterModalOpen(true)}
+                        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Register
+                    </Button>
+                </>
+            );
         }
     };
 
@@ -90,18 +165,7 @@ function Sidebar({ isOpen, setIsOpen }) {
                 </ul>
             </nav>
             <div className="p-4 space-y-2">
-                <Button
-                    onClick={() => setIsLoginModalOpen(true)}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                >
-                    Login
-                </Button>
-                <Button
-                    onClick={() => setIsRegisterModalOpen(true)}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
-                >
-                    Register
-                </Button>
+                {renderAuthButton()}
                 <Button
                     onClick={handleTestButtonClick}
                     className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
@@ -169,6 +233,7 @@ function Sidebar({ isOpen, setIsOpen }) {
             <LoginModal
                 isOpen={isLoginModalOpen}
                 onClose={() => setIsLoginModalOpen(false)}
+                onLoginSuccess={handleLoginSuccess}
             />
             <RegisterModal
                 isOpen={isRegisterModalOpen}

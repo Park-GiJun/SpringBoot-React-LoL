@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/common/Button';
-import { login } from '../../utils/auth';
+import axios from 'axios';
 
-function LoginModal({ isOpen, onClose }) {
+function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -13,8 +13,15 @@ function LoginModal({ isOpen, onClose }) {
         e.preventDefault();
         setError('');
         try {
-            const userData = await login(username, password);
-            console.log('Login successful', userData);
+            const response = await axios.post('http://15.165.163.233:9832/api/auth/login', {
+                username,
+                password
+            });
+            console.log('Login successful', response.data);
+
+            localStorage.setItem('token', `Bearer ${response.data.token}`);
+
+            onLoginSuccess();
             onClose();
         } catch (error) {
             setError('Login failed. Please check your credentials.');
@@ -31,14 +38,14 @@ function LoginModal({ isOpen, onClose }) {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Username"
-                    className="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    className="w-full p-2 rounded bg-gray-600 text-white"
                 />
                 <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
-                    className="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    className="w-full p-2 rounded bg-gray-600 text-white"
                 />
                 <Button
                     type="submit"
@@ -54,6 +61,7 @@ function LoginModal({ isOpen, onClose }) {
 LoginModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
+    onLoginSuccess: PropTypes.func.isRequired,
 };
 
 export default LoginModal;

@@ -3,6 +3,8 @@ package com.example.springbootreactlol.service;
 import com.example.springbootreactlol.data.UserRole;
 import com.example.springbootreactlol.entity.User;
 import com.example.springbootreactlol.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +28,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPoint(user.getPoint() + 50);
+        userRepository.save(user);
+
+        return user;
     }
 
     public User changeUserRole(String username, UserRole newRole) {
@@ -43,5 +51,11 @@ public class UserService {
 
     public boolean isMaster(User user) {
         return user.getRole() == UserRole.MASTER;
+    }
+
+    public Integer getUserPoints(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return user.getPoint();
     }
 }

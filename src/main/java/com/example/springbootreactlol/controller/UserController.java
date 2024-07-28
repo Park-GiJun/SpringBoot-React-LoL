@@ -1,6 +1,5 @@
 package com.example.springbootreactlol.controller;
 
-import com.example.springbootreactlol.data.AuthResponse;
 import com.example.springbootreactlol.data.UserRole;
 import com.example.springbootreactlol.dto.LoginRequest;
 import com.example.springbootreactlol.dto.UserRegistrationRequest;
@@ -14,13 +13,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 @Log4j2
 @RestController
@@ -39,9 +44,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @Operation(summary = "User login", description = "Authenticate a user and return a JWT token")
-    @ApiResponse(responseCode = "200", description = "Successful login",
-            content = @Content(schema = @Schema(implementation = AuthResponse.class)))
     @PostMapping("/api/auth/login")
     public ResponseEntity<?> login(
             @Parameter(description = "Login credentials", required = true)
@@ -49,11 +51,15 @@ public class UserController {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         final User user = userService.findByUsername(loginRequest.getUsername());
-        final String jwt = jwtUtil.generateToken(user.getUsername());
 
-        log.info(new AuthResponse(jwt));
+        log.fatal("user info {} {} {} {} {}", user.getUsername(), user.getPoint(), user.getRole(), user.getPassword(), user.getPoint());
 
-        return ResponseEntity.ok(new AuthResponse(jwt));
+        final String jwt = jwtUtil.generateToken(user);
+
+        Map<String, String> tokenMap = new HashMap<>();
+        tokenMap.put("token", jwt);
+
+        return ResponseEntity.ok().body(tokenMap);
     }
 
     @Operation(summary = "Register new user", description = "Register a new user in the system")
@@ -76,5 +82,18 @@ public class UserController {
             @Parameter(description = "New role for the user", required = true)
             @RequestBody @Schema(implementation = UserRoleChangeRequest.class) UserRole newRole) {
         return ResponseEntity.ok(userService.changeUserRole(username, newRole));
+    }
+
+
+    @GetMapping("/api/user/points")
+    public ResponseEntity<Integer> getUserPoints(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            log.warn("Unauthorized access attempt to /api/auth/points");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String username = authentication.getName();
+        log.info("Fetching points for user: {}", username);
+        Integer points = userService.getUserPoints(username);
+        return ResponseEntity.ok(points);
     }
 }

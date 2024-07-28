@@ -53,10 +53,14 @@ const PlayerStats = ({ nickname }) => {
         setIsLoading(true);
         try {
             const response = await axios.get(`http://15.165.163.233:9832/public/searchByMatchCode?matchCode=${matchCode}`);
+            console.log("Match data received:", response.data);
             setSelectedMatch(response.data);
             setIsModalOpen(true);
+            console.log("Modal should be open now");
         } catch (error) {
             console.error("Error fetching match data:", error);
+            // 사용자에게 오류 메시지 표시
+            alert("매치 데이터를 불러오는 데 실패했습니다.");
         } finally {
             setIsLoading(false);
         }
@@ -172,8 +176,8 @@ const PlayerStats = ({ nickname }) => {
                 </div>
             </div>
             {isModalOpen && selectedMatch && (
-                <MatchModal onClose={() => setIsModalOpen(false)} isOpen>
-                    <MatchDetailModal recentGames={selectedMatch}/>
+                <MatchModal onClose={() => setIsModalOpen(false)} isOpen={isModalOpen}>
+                    <MatchDetailModal recentGames={selectedMatch} />
                 </MatchModal>
             )}
         </div>
