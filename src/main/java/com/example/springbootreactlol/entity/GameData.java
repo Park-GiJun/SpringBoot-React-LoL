@@ -16,7 +16,7 @@ public class GameData {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "assists", nullable = false)
+    @Column(name = "assists", nullable = true)
     private Integer assists;
 
     @Column(name = "champion")
@@ -25,10 +25,10 @@ public class GameData {
     @Column(name = "date")
     private Instant date;
 
-    @Column(name = "deaths", nullable = false)
+    @Column(name = "deaths", nullable = true)
     private Integer deaths;
 
-    @Column(name = "kills", nullable = false)
+    @Column(name = "kills", nullable = true)
     private Integer kills;
 
     @Column(name = "match_code")
@@ -46,7 +46,7 @@ public class GameData {
     @Column(name = "team_color")
     private String teamColor;
 
-    @Column(name = "winning", nullable = false)
+    @Column(name = "winning", nullable = true)
     private Integer winning;
 
 }

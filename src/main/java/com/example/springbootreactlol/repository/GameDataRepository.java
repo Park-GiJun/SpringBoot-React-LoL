@@ -255,4 +255,7 @@ SELECT * from game_data g LEFT JOIN champion c on g.champion = c.champion WHERE 
             """, nativeQuery = true)
     List<ChampionStatisticsProjection> findChampionStatistics();
 
+
+    List<GameData> findByTeamColorAndMatchCode(String teamColor, String matchCode);
+    GameData findByNicknameAndMatchCode(String nickname, String matchCode);
 }

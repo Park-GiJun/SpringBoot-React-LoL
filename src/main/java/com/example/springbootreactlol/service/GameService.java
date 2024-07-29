@@ -1,6 +1,5 @@
 package com.example.springbootreactlol.service;
 
-import com.example.springbootreactlol.data.GameDataDTO;
 import com.example.springbootreactlol.entity.Ban;
 import com.example.springbootreactlol.entity.GameData;
 import com.example.springbootreactlol.entity.MatchCode;
