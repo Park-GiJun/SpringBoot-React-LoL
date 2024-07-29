@@ -1,11 +1,13 @@
 package com.example.springbootreactlol.utils;
 
 import com.example.springbootreactlol.data.TeamStats;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.*;
 
 public record LeagueResult(Map<String, TeamStats> teamStats) {
 
+    @JsonIgnore
     public String getResultsAsString() {
         StringBuilder sb = new StringBuilder("League Results:%n%n");
         List<Map.Entry<String, TeamStats>> sortedEntries = teamStats.entrySet().stream()

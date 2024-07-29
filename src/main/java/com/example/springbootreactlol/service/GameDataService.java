@@ -5,6 +5,9 @@ import com.example.springbootreactlol.projection.*;
 import com.example.springbootreactlol.repository.GameDataRepository;
 import com.example.springbootreactlol.utils.LeagueDataProcessor;
 import com.example.springbootreactlol.utils.LeagueResult;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -71,16 +74,17 @@ public class GameDataService {
         return gameDataRepository.findChampionStatistics();
     }
 
-    public List<GameData> getListMatchCode(String matchCodes){
-        List<String> listMatchCode  = List.of(matchCodes.split(","));
+    @SneakyThrows
+    public String getListMatchCode(String matchCodes) {
+        List<String> listMatchCode = List.of(matchCodes.split(","));
         List<GameData> dataList = gameDataRepository.findByMatchCodeIn(listMatchCode);
 
-
         LeagueResult result = leagueDataProcessor.processLeagueData(dataList);
-        String resultString = result.getResultsAsString();
-        log.fatal(resultString);
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        return dataList ;
+        String jsonString = objectMapper.writeValueAsString(result);
+        log.fatal(jsonString);
+        return jsonString;
     }
 
 }

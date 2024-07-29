@@ -117,7 +117,7 @@ public class GameDataController {
     }
 
     @GetMapping("/public/matchCodesList")
-    public ResponseEntity<List<GameData>> parseMatchCodesList(@RequestParam String matchCodes){
+    public ResponseEntity<String> parseMatchCodesList(@RequestParam String matchCodes){
         return ResponseEntity.ok(gameDataService.getListMatchCode(matchCodes));
     }
 }

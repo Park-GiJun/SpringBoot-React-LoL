@@ -21,6 +21,9 @@ module.exports = {
       },
       fontFamily:{
         sans : ['DungGeunMo', 'Helvetica', 'Arial', 'sans-serif']
+      },
+      fontSize:{
+        xxs : ['0.2rem', '0.6rem'],
       }
     },
   },

@@ -95,18 +95,18 @@ function MainPage() {
                             <SortableHeader label="닉네임" sortKey="nickname"/>
                             <SortableHeader label="KDA" sortKey="kda"/>
                             <SortableHeader label="승률" sortKey="winningPercentage"/>
-                            <SortableHeader label="챔피언" sortKey="mostChampion" className="hidden sm:block"/>
-                            <SortableHeader label="포지션" sortKey="mostPosition" className="hidden sm:block"/>
-                            <SortableHeader label="게임 수" sortKey="playedGames" className="hidden sm:block"/>
+                            <SortableHeader label="챔피언" sortKey="mostChampion"/>
+                            <SortableHeader label="포지션" sortKey="mostPosition"/>
+                            <SortableHeader label="게임 수" sortKey="playedGames"/>
                         </div>
                         {rankings.map((stat, index) => (
                             <div key={index} className="grid grid-cols-3 sm:grid-cols-6 gap-1 sm:gap-2 border-t border-gray-700 py-1 sm:py-2 text-xs">
                                 <div className={getNicknameClass(stat.nickname)} title={stat.nickname}>{stat.nickname}</div>
                                 <div>{stat.kda.toFixed(2)}</div>
                                 <div>{stat.winningPercentage.toFixed(2)}%</div>
-                                <div className="truncate hidden sm:block" title={stat.mostChampion}>{stat.mostChampion}</div>
-                                <div className="hidden sm:block">{stat.mostPosition}</div>
-                                <div className="hidden sm:block">{stat.playedGames}</div>
+                                <div className="truncate" title={stat.mostChampion}>{stat.mostChampion}</div>
+                                <div className="">{stat.mostPosition}</div>
+                                <div className="">{stat.playedGames}</div>
                             </div>
                         ))}
                     </div>
