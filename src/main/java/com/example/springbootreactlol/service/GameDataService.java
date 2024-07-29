@@ -3,19 +3,24 @@ package com.example.springbootreactlol.service;
 import com.example.springbootreactlol.entity.GameData;
 import com.example.springbootreactlol.projection.*;
 import com.example.springbootreactlol.repository.GameDataRepository;
+import com.example.springbootreactlol.utils.LeagueDataProcessor;
+import com.example.springbootreactlol.utils.LeagueResult;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
 
 @Service
+@Log4j2
 public class GameDataService {
 
     private final GameDataRepository gameDataRepository;
+    private final LeagueDataProcessor leagueDataProcessor;
 
-    public GameDataService(GameDataRepository gameDataRepository) {
+    public GameDataService(GameDataRepository gameDataRepository, LeagueDataProcessor leagueDataProcessor) {
         this.gameDataRepository = gameDataRepository;
+        this.leagueDataProcessor = leagueDataProcessor;
     }
 
     public List<RankingProjection> getAllPlayerStats() {
@@ -64,6 +69,18 @@ public class GameDataService {
 
     public List<ChampionStatisticsProjection> getTierList(){
         return gameDataRepository.findChampionStatistics();
+    }
+
+    public List<GameData> getListMatchCode(String matchCodes){
+        List<String> listMatchCode  = List.of(matchCodes.split(","));
+        List<GameData> dataList = gameDataRepository.findByMatchCodeIn(listMatchCode);
+
+
+        LeagueResult result = leagueDataProcessor.processLeagueData(dataList);
+        String resultString = result.getResultsAsString();
+        log.fatal(resultString);
+
+        return dataList ;
     }
 
 }

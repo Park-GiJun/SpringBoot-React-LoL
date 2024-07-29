@@ -115,4 +115,9 @@ public class GameDataController {
     public ResponseEntity<List<ChampionStatisticsProjection>> searchTierList(){
         return ResponseEntity.ok(gameDataService.getTierList());
     }
+
+    @GetMapping("/public/matchCodesList")
+    public ResponseEntity<List<GameData>> parseMatchCodesList(@RequestParam String matchCodes){
+        return ResponseEntity.ok(gameDataService.getListMatchCode(matchCodes));
+    }
 }

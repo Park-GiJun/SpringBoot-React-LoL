@@ -23,4 +23,6 @@ public class League {
 
     private String leagueMatchCode;
 
+    private boolean checkFinal;
+
 }

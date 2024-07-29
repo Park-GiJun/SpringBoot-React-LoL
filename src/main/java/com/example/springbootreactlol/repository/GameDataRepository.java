@@ -258,4 +258,6 @@ SELECT * from game_data g LEFT JOIN champion c on g.champion = c.champion WHERE 
 
     List<GameData> findByTeamColorAndMatchCode(String teamColor, String matchCode);
     GameData findByNicknameAndMatchCode(String nickname, String matchCode);
+
+    List<GameData> findByMatchCodeIn(List<String> matchCodes);
 }

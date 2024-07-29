@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import axios from 'axios';
@@ -10,17 +10,24 @@ function App() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [isOpen, setIsOpen] = useState(false);
     const [recentGames, setRecentGames] = useState([]);
+    const calendarRef = useRef(null);
+
+    const formatDate = (date) => {
+        const d = new Date(date);
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        return d.toISOString().split('T')[0];
+    };
 
     useEffect(() => {
         axios.get('http://15.165.163.233:9832/public/matchDate')
             .then(response => {
-                const fetchedDates = response.data;
+                const fetchedDates = response.data.map(d => new Date(d.matchDate + 'T00:00:00'));
+                console.log(fetchedDates);
                 setDates(fetchedDates);
 
                 if (fetchedDates.length > 0) {
-                    const latestDate = new Date(fetchedDates[0].matchDate);
-                    setSelectedDate(latestDate);
-                    fetchGamesForDate(latestDate);
+                    setSelectedDate(fetchedDates[0]);
+                    fetchGamesForDate(fetchedDates[0]);
                 }
             })
             .catch(error => {
@@ -28,8 +35,21 @@ function App() {
             });
     }, []);
 
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [calendarRef]);
+
     const fetchGamesForDate = (date) => {
-        const formattedDate = date.toISOString().split('T')[0];
+        const formattedDate = formatDate(date);
         axios.get(`http://15.165.163.233:9832/public/matchData?date=${formattedDate}`)
             .then(response => {
                 setRecentGames(response.data);
@@ -44,15 +64,15 @@ function App() {
     };
 
     const handleDateChange = (date) => {
-        console.log('Clicked date:', date);
+        console.log('Clicked date:', formatDate(date));
         setSelectedDate(date);
         fetchGamesForDate(date);
+        setIsOpen(false);  // 날짜 선택 후 달력 닫기
     };
 
     const tileContent = ({ date, view }) => {
         if (view === 'month') {
-            const formattedDate = date.toISOString().split('T')[0];
-            if (dates.find(d => d.matchDate === formattedDate)) {
+            if (dates.some(d => formatDate(d) === formatDate(date))) {
                 return <div className="w-2 h-2 bg-red-500 rounded-full mx-auto mt-1" />;
             }
         }
@@ -60,8 +80,7 @@ function App() {
 
     const tileDisabled = ({ date, view }) => {
         if (view === 'month') {
-            const formattedDate = date.toISOString().split('T')[0];
-            return !dates.find(d => d.matchDate === formattedDate);
+            return !dates.some(d => formatDate(d) === formatDate(date));
         }
         return false;
     };
@@ -72,7 +91,7 @@ function App() {
                 {isOpen ? 'Close Calendar' : 'Open Calendar'}
             </button>
             {isOpen && (
-                <div className="absolute top-24 bg-white shadow-lg rounded-lg p-2">
+                <div ref={calendarRef} className="absolute top-24 bg-white shadow-lg rounded-lg p-2">
                     <Calendar
                         tileContent={tileContent}
                         tileDisabled={tileDisabled}
@@ -81,8 +100,7 @@ function App() {
                         className="p-2 text-gray-800"
                         tileClassName={({date, view}) => {
                             if (view === 'month') {
-                                const formattedDate = date.toISOString().split('T')[0];
-                                if (dates.find(d => d.matchDate === formattedDate)) {
+                                if (dates.some(d => formatDate(d) === formatDate(date))) {
                                     return 'bg-blue-400';
                                 }
                             }

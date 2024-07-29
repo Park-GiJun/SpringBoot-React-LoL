@@ -8,6 +8,7 @@ import Schedule from "./pages/Schedule";
 import SaveGame from "./pages/SaveGame";
 import Stats from "./pages/Stats";
 import Ranking from "./pages/Ranking";
+import League from "./pages/League";
 
 function App() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -71,6 +72,14 @@ function App() {
                                         <title>전적 검색 | OLM</title>
                                     </Helmet>
                                     <Stats />
+                                </>
+                            } />
+                            <Route path="/league" element={
+                                <>
+                                    <Helmet>
+                                        <title>리그 | OLM</title>
+                                    </Helmet>
+                                    <League />
                                 </>
                             } />
                         </Routes>

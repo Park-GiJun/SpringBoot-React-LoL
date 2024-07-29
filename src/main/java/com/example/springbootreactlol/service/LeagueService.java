@@ -5,6 +5,7 @@ import com.example.springbootreactlol.entity.Ban;
 import com.example.springbootreactlol.entity.GameData;
 import com.example.springbootreactlol.entity.League;
 import com.example.springbootreactlol.entity.MatchCode;
+import com.example.springbootreactlol.projection.LeagueStatusProjection;
 import com.example.springbootreactlol.repository.LeagueRepository;
 import com.example.springbootreactlol.repository.MatchCodeRepository;
 import com.example.springbootreactlol.utils.MatchCodeGenerator;
@@ -25,6 +26,10 @@ public class LeagueService {
     public LeagueService(LeagueRepository leagueRepository, MatchCodeRepository matchCodeRepository) {
         this.leagueRepository = leagueRepository;
         this.matchCodeRepository = matchCodeRepository;
+    }
+
+    public List<LeagueStatusProjection> getLeagueStatusList() {
+        return leagueRepository.getLeagueStatus();
     }
 
 }

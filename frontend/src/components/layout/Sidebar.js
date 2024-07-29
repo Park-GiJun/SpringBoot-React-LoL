@@ -62,7 +62,7 @@ function Sidebar({ isOpen, setIsOpen }) {
         {path: '/ranking', label: '기록실'},
         {path: '/matches', label: '경기'},
         {path: '/schedule', label: '게임 일정'},
-        {path: '/tournament', label: '토너먼트'},
+        {path: '/league', label: '리그'},
         {path: '/saveGame', label: '게임저장'}
     ];
 
