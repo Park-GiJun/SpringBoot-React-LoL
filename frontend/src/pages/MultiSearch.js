@@ -15,7 +15,7 @@ function MultiSearch() {
             const latestVersion = versionResponse.data[0];
             setVersion(latestVersion);
 
-            const response = await axios.post('http://localhost:9832/public/multiSearch', null, {
+            const response = await axios.post('http://15.165.163.233:9832/public/multiSearch', null, {
                 params: { nickNameList: searchInput }
             });
             setSearchResults(response.data);
