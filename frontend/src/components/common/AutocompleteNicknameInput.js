@@ -26,8 +26,8 @@ function AutoCompleteNicknameInput({ value, onChange, placeholder, onSelectNext 
     ).current;
 
     useEffect(() => {
-        debouncedFetchSuggestions(value);
-    }, [value]);
+        debouncedFetchSuggestions();
+    }, [debouncedFetchSuggestions]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'ArrowDown') {

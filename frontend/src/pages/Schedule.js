@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import axios from 'axios';
@@ -18,8 +18,19 @@ function App() {
         return d.toISOString().split('T')[0];
     };
 
+    const fetchGamesForDate = useCallback((date) => {
+        const formattedDate = formatDate(date);
+        axios.get(`http://15.165.163.233:9832/public/matchData?date=${formattedDate}`)
+            .then(response => {
+                setRecentGames(response.data);
+            })
+            .catch(error => {
+                console.error('There was an error fetching the games!', error);
+            });
+    }, []);
+
     useEffect(() => {
-        axios.get('http://15.165.163.233:9832/public/matchDate')
+        axios.get(`http://15.165.163.233:9832/public/matchDate`)
             .then(response => {
                 const fetchedDates = response.data.map(d => new Date(d.matchDate + 'T00:00:00'));
                 console.log(fetchedDates);
@@ -33,7 +44,7 @@ function App() {
             .catch(error => {
                 console.error('There was an error fetching the dates!', error);
             });
-    }, []);
+    }, [fetchGamesForDate]);
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -46,18 +57,7 @@ function App() {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [calendarRef]);
-
-    const fetchGamesForDate = (date) => {
-        const formattedDate = formatDate(date);
-        axios.get(`http://15.165.163.233:9832/public/matchData?date=${formattedDate}`)
-            .then(response => {
-                setRecentGames(response.data);
-            })
-            .catch(error => {
-                console.error('There was an error fetching the games!', error);
-            });
-    };
+    }, []);
 
     const toggleCalendar = () => {
         setIsOpen(!isOpen);
