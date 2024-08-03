@@ -49,7 +49,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/react-lol:latest
+        tags: ${{ secrets.DOCKER_NICKNAME }}/react-lol:latest
     
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
