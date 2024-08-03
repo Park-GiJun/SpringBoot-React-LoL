@@ -43,4 +43,4 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/react-lol:latest
           docker stop react-lol-container || true
           docker rm react-lol-container || true
-          docker run -d --name react-lol-container -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/react-lol:latest
+          docker run -d --name react-lol-container -p 9832:9832 ${{ secrets.DOCKER_USERNAME }}/react-lol:latest
