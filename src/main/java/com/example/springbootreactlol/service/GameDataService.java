@@ -87,4 +87,8 @@ public class GameDataService {
         return jsonString;
     }
 
+    public List<ChampionStatWithEnglishNameProjection> getTop3Stats(String nickname) {
+        return gameDataRepository.findChampionStatsTop3(nickname);
+    }
+
 }

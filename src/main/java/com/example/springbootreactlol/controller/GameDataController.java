@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j2
 @RestController
@@ -119,5 +118,17 @@ public class GameDataController {
     @GetMapping("/public/matchCodesList")
     public ResponseEntity<String> parseMatchCodesList(@RequestParam String matchCodes){
         return ResponseEntity.ok(gameDataService.getListMatchCode(matchCodes));
+    }
+
+    @PostMapping("/public/multiSearch")
+    public ResponseEntity<Map<String, List<ChampionStatWithEnglishNameProjection>>> multiSearch(@RequestParam String nickNameList) {
+        List<String> nickNames = Arrays.stream(nickNameList.split(","))
+                .map(String::trim)
+                .toList();
+        Map<String, List<ChampionStatWithEnglishNameProjection>> resultMap = new HashMap<>();
+        for (String nickName : nickNames) {
+            resultMap.put(nickName, gameDataService.getTop3Stats(nickName));
+        }
+        return ResponseEntity.ok(resultMap);
     }
 }

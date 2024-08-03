@@ -9,6 +9,7 @@ import SaveGame from "./pages/SaveGame";
 import Stats from "./pages/Stats";
 import Ranking from "./pages/Ranking";
 import League from "./pages/League";
+import MultiSearch from "./pages/MultiSearch";
 
 function App() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -72,6 +73,14 @@ function App() {
                                         <title>전적 검색 | OLM</title>
                                     </Helmet>
                                     <Stats />
+                                </>
+                            } />
+                            <Route path="/multiSearch" element={
+                                <>
+                                    <Helmet>
+                                        <title>멀티 서치 | OLM</title>
+                                    </Helmet>
+                                    <MultiSearch />
                                 </>
                             } />
                             <Route path="/league" element={

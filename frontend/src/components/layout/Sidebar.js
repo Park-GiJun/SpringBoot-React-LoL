@@ -59,6 +59,7 @@ function Sidebar({ isOpen, setIsOpen }) {
     const navItems = [
         {path: '/', label: '홈'},
         {path: '/stats', label: '전적 검색'},
+        {path: 'multiSearch', label: '멀티 서치'},
         {path: '/ranking', label: '기록실'},
         {path: '/matches', label: '경기'},
         {path: '/schedule', label: '게임 일정'},

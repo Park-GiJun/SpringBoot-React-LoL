@@ -155,7 +155,6 @@ public interface GameDataRepository extends JpaRepository<GameData, Long> {
                               totalGames
                        FROM ChampionStats
                        ORDER BY totalGames DESC, winRate DESC
-                       
             """)
     List<ChampionStatProjection> findChampionStats(@Param("nickname") String nickname);
 
@@ -260,4 +259,29 @@ SELECT * from game_data g LEFT JOIN champion c on g.champion = c.champion WHERE 
     GameData findByNicknameAndMatchCode(String nickname, String matchCode);
 
     List<GameData> findByMatchCodeIn(List<String> matchCodes);
+
+
+    @Query(nativeQuery = true, value = """
+               WITH ChampionStats AS (
+                                    SELECT champion,
+                                           position,
+                                           SUM(IF(winning = 1, 1, 0)) * 100.0 / COUNT(*) AS winRate,
+                                           (SUM(kills) + SUM(assists)) / SUM(deaths) AS kda,
+                                           COUNT(*) AS totalGames
+                                    FROM game_data
+                                    WHERE nickname = :nickname
+                                    GROUP BY champion, position
+                                )
+                                SELECT S.champion AS champion,
+                                       C.championEnglish AS championEnglish,
+                                       position,
+                                       ROUND(winRate, 2) AS winRate,
+                                       ROUND(kda, 2) AS kda,
+                                       totalGames
+                                FROM ChampionStats S
+                                         JOIN champion C ON S.champion = C.champion
+                                ORDER BY totalGames DESC, winRate DESC
+                                LIMIT 6;
+           """)
+    List<ChampionStatWithEnglishNameProjection> findChampionStatsTop3(@Param("nickname") String nickname);
 }
