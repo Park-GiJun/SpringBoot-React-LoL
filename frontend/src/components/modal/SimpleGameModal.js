@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+import * as XLSX from 'xlsx';
 import AutoCompleteNicknameInput from "../common/AutocompleteNicknameInput";
 
 function SimpleGameModal({ onSetup }) {
@@ -27,9 +29,56 @@ function SimpleGameModal({ onSetup }) {
         onSetup({ rounds, teamA, teamB });
     };
 
+    const onDrop = useCallback((acceptedFiles) => {
+        const file = acceptedFiles[0];
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[1]; // 두 번째 시트 선택
+            const worksheet = workbook.Sheets[sheetName];
+
+            const newTeamA = [];
+            const newTeamB = [];
+
+            // A팀 닉네임 추출 (C열)
+            for (let row = 2; row <= 6; row++) {
+                const cellAddress = 'C' + row;
+                const cellValue = worksheet[cellAddress] ? worksheet[cellAddress].v : '';
+                newTeamA.push(cellValue !== '#N/A' ? cellValue : '');
+            }
+
+            // B팀 닉네임 추출 (F열)
+            for (let row = 2; row <= 6; row++) {
+                const cellAddress = 'F' + row;
+                const cellValue = worksheet[cellAddress] ? worksheet[cellAddress].v : '';
+                newTeamB.push(cellValue !== '#N/A' ? cellValue : '');
+            }
+
+            setTeamA(newTeamA);
+            setTeamB(newTeamB);
+        };
+
+        reader.readAsArrayBuffer(file);
+    }, []);
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, accept: '.xlsx, .xls' });
+
     return (
         <div className="bg-gray-800 space-y-4 p-4 rounded-lg">
             <h2 className="text-2xl font-bold mb-4 text-white">단순 내전 설정</h2>
+
+            <div
+                {...getRootProps()}
+                className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer mb-4 ${
+                    isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+                }`}
+            >
+                <input {...getInputProps()} />
+                <p className="text-gray-300">엑셀 파일을 드래그하거나 클릭하여 업로드하세요</p>
+            </div>
+
             <div>
                 <label className="block mb-2 text-white">판 수</label>
                 <input

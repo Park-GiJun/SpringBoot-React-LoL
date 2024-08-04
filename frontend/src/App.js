@@ -10,6 +10,7 @@ import Stats from "./pages/Stats";
 import Ranking from "./pages/Ranking";
 import League from "./pages/League";
 import MultiSearch from "./pages/MultiSearch";
+import TestPage from "./pages/Test";
 
 function App() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -89,6 +90,14 @@ function App() {
                                         <title>리그 | OLM</title>
                                     </Helmet>
                                     <League />
+                                </>
+                            } />
+                            <Route path="/test" element={
+                                <>
+                                    <Helmet>
+                                        <title>박기준 전용 테스트 페이지</title>
+                                    </Helmet>
+                                    <TestPage />
                                 </>
                             } />
                         </Routes>

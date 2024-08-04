@@ -10,7 +10,7 @@ function AutoCompleteNicknameInput({ value, onChange, placeholder, onSelectNext 
 
     const debouncedFetchSuggestions = useRef(
         debounce(async (input) => {
-            if (input.length > 0) {
+            if (input?.length > 0) {
                 try {
                     const response = await axios.get(`http://15.165.163.233:9832/public/searchNickname?nickname=${input}`);
                     setSuggestions(response.data);
@@ -26,8 +26,8 @@ function AutoCompleteNicknameInput({ value, onChange, placeholder, onSelectNext 
     ).current;
 
     useEffect(() => {
-        debouncedFetchSuggestions();
-    }, [debouncedFetchSuggestions]);
+        debouncedFetchSuggestions(value);
+    }, [value, debouncedFetchSuggestions]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'ArrowDown') {

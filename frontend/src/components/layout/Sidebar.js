@@ -67,14 +67,8 @@ function Sidebar({ isOpen, setIsOpen }) {
         {path: '/saveGame', label: '게임저장'}
     ];
 
-    const handleTestButtonClick = async () => {
-        try {
-            const response = await axios.get('http://15.165.163.233:9832/public/test');
-            setTestResponse(response.data);
-        } catch (error) {
-            console.error('Error fetching test endpoint:', error);
-            setTestResponse('Error fetching test endpoint');
-        }
+    const handleTestButtonClick = () => {
+        navigate('/test'); 
     };
 
     const handleSearch = (e) => {
