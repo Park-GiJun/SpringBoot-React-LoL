@@ -8,7 +8,7 @@ import RegisterModal from '../../features/auth/RegisterModal';
 // TODO : 로그인시 로그인버튼, 회원가입 버튼 안보이고 로그 아웃 버튼으로 대체, 사이드바에서 현재 로그인한 닉네임, 포인트 출력
 
 
-function Sidebar({ isOpen, setIsOpen }) {
+function Sidebar({ isOpen, setIsOpen, toggleChat }) {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
     const [testResponse, setTestResponse] = useState('');
@@ -64,11 +64,12 @@ function Sidebar({ isOpen, setIsOpen }) {
         {path: '/matches', label: '경기'},
         {path: '/schedule', label: '게임 일정'},
         {path: '/league', label: '리그'},
+        {path: '/chatRoom', label: '채팅방'},
         {path: '/saveGame', label: '게임저장'}
     ];
 
     const handleTestButtonClick = () => {
-        navigate('/test'); 
+        navigate('/test');
     };
 
     const handleSearch = (e) => {
@@ -165,6 +166,12 @@ function Sidebar({ isOpen, setIsOpen }) {
             <div className="p-4 space-y-2">
                 {renderAuthButton()}
                 <Button
+                    onClick={toggleChat}
+                    className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                >
+                    채팅
+                </Button>
+                <Button
                     onClick={handleTestButtonClick}
                     className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
                 >
@@ -216,6 +223,7 @@ function Sidebar({ isOpen, setIsOpen }) {
                                 </>
                             ) : null}
                         </div>
+
                         <button
                             className="p-1 bg-gray-800 text-white rounded-md focus:outline-none"
                             onClick={toggleNavigation}

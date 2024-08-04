@@ -68,7 +68,7 @@ function LeagueSetupModal({ teamCount, onSetup }) {
                 }`}
             >
                 <input {...getInputProps()} />
-                <p className="text-gray-300">엑셀 파일을 드래그하거나 클릭하여 업로드하세요</p>
+                <p className="text-gray-300">엑셀 파일</p>
             </div>
 
             {teams.map((team, teamIndex) => (

@@ -11,10 +11,14 @@ import Ranking from "./pages/Ranking";
 import League from "./pages/League";
 import MultiSearch from "./pages/MultiSearch";
 import TestPage from "./pages/Test";
+import ChatRoom from "./pages/ChatRoom";
+
 
 function App() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [username, setUsername] = useState('');
 
     useEffect(() => {
         const checkMobile = () => {
@@ -25,11 +29,19 @@ function App() {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
+    const toggleChat = () => {
+        setIsChatOpen(!isChatOpen);
+    };
+
     return (
         <AuthProvider>
             <Router>
                 <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-gray-900 text-gray-100">
-                    <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+                    <Sidebar
+                        isOpen={isSidebarOpen}
+                        setIsOpen={setIsSidebarOpen}
+                        toggleChat={toggleChat}
+                    />
                     <main className={`flex-1 p-4 lg:p-6 overflow-auto transition-all duration-300 ${
                         isMobile
                             ? isSidebarOpen ? 'mt-[100px]' : 'mt-16'
@@ -102,6 +114,11 @@ function App() {
                             } />
                         </Routes>
                     </main>
+                    <ChatRoom
+                        isOpen={isChatOpen}
+                        onClose={() => setIsChatOpen(false)}
+                        initialUsername={username}
+                    />
                 </div>
             </Router>
         </AuthProvider>
