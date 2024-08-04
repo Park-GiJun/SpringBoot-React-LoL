@@ -102,6 +102,7 @@ public class GameDataController {
 
     @GetMapping("/public/searchByNickname")
     public ResponseEntity<List<RecentMatchListProjection>> searchByNickname(@RequestParam String nickname){
+        log.info("Searching for recent matches for nickname: {}", nickname);
         return ResponseEntity.ok(gameDataService.getGameDataByNickname(nickname));
     }
 
@@ -122,6 +123,7 @@ public class GameDataController {
 
     @PostMapping("/public/multiSearch")
     public ResponseEntity<Map<String, List<ChampionStatWithEnglishNameProjection>>> multiSearch(@RequestParam String nickNameList) {
+        log.info("Multi search for nickname: {}", nickNameList);
         List<String> nickNames = Arrays.stream(nickNameList.split(","))
                 .map(String::trim)
                 .toList();
