@@ -66,38 +66,10 @@ jobs:
             docker pull ${{ secrets.DOCKER_NICKNAME }}/react-lol:latest
             docker stop react-lol-container || true
             docker rm react-lol-container || true
-            docker run -d --name react-lol-container -p 9832:9832 \
-              -v /path/to/logs:/app/logs \
-              --log-driver=json-file \
-              --log-opt max-size=10m \
-              --log-opt max-file=5 \
-              ${{ secrets.DOCKER_NICKNAME }}/react-lol:latest
+            docker run -d --name react-lol-container -p 9832:9832 ${{ secrets.DOCKER_NICKNAME }}/react-lol:latest
             
-            # Install Filebeat if not already installed
-            if ! command -v filebeat &> /dev/null
-            then
-                curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.15.0-amd64.deb
-                sudo dpkg -i filebeat-7.15.0-amd64.deb
-            fi
-            
-            # Configure Filebeat
-            sudo tee /etc/filebeat/filebeat.yml > /dev/null <<EOF
-            filebeat.inputs:
-            - type: docker
-              containers.ids:
-                - "*"
-              processors:
-                - add_docker_metadata: ~
-            
-            output.elasticsearch:
-              hosts: ["localhost:9200"]
-            
-            setup.kibana:
-              host: "localhost:5601"
-            EOF
-            
-            # Restart Filebeat
-            sudo systemctl restart filebeat
+            # Create logs directory if it doesn't exist
+            mkdir -p logs
             
             # Install serve globally
             npm install -g serve
@@ -115,4 +87,10 @@ jobs:
             # Generate startup script to restart PM2 on server reboot
             sudo env PATH=$PATH:/usr/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ${{ secrets.EC2_USERNAME }} --hp /home/${{ secrets.EC2_USERNAME }}
             
-            echo "Deployment completed. Logs are being sent to ELK stack."
+            # Display PM2 logs
+            pm2 logs --lines 50
+            
+            # Display Docker container logs
+            docker logs react-lol-container --tail 50
+            
+            echo "Deployment completed. Check the logs above for any issues."
