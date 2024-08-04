@@ -9,70 +9,110 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up JDK 21
-      uses: actions/setup-java@v3
-      with:
-        java-version: '21'
-        distribution: 'oracle'
+      - uses: actions/checkout@v3
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    
-    - name: Build with Gradle
-      run: ./gradlew build -x test
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'oracle'
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '21' 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-    - name: Install frontend dependencies
-      run: |
-        cd frontend
-        npm install
+      - name: Build with Gradle
+        run: ./gradlew build -x test
 
-    - name: Build frontend
-      run: |
-        cd frontend
-        CI=false npm run build
-    
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-    
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: ${{ secrets.DOCKER_NICKNAME }}/react-lol:latest
-    
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          docker pull ${{ secrets.DOCKER_NICKNAME }}/react-lol:latest
-          docker stop react-lol-container || true
-          docker rm react-lol-container || true
-          docker run -d --name react-lol-container -p 9832:9832 ${{ secrets.DOCKER_NICKNAME }}/react-lol:latest
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '21'
 
-          # Stop existing PM2 process if any
-          pm2 stop all || true
-          pm2 delete all || true
-          
-          # Start new PM2 process
-          pm2 start ecosystem.config.js
-          
-          # Save PM2 process list and environment
-          pm2 save
-          
-          # Generate startup script to restart PM2 on server reboot
-          pm2 startup
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          CI=false npm run build
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_NICKNAME }}/react-lol:latest
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # Stop existing process on port 9832
+            sudo lsof -ti:9832 | xargs -r sudo kill -9
+            
+            # Pull and run new Docker image
+            docker pull ${{ secrets.DOCKER_NICKNAME }}/react-lol:latest
+            docker stop react-lol-container || true
+            docker rm react-lol-container || true
+            docker run -d --name react-lol-container -p 9832:9832 \
+              -v /path/to/logs:/app/logs \
+              --log-driver=json-file \
+              --log-opt max-size=10m \
+              --log-opt max-file=5 \
+              ${{ secrets.DOCKER_NICKNAME }}/react-lol:latest
+            
+            # Install Filebeat if not already installed
+            if ! command -v filebeat &> /dev/null
+            then
+                curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.15.0-amd64.deb
+                sudo dpkg -i filebeat-7.15.0-amd64.deb
+            fi
+            
+            # Configure Filebeat
+            sudo tee /etc/filebeat/filebeat.yml > /dev/null <<EOF
+            filebeat.inputs:
+            - type: docker
+              containers.ids:
+                - "*"
+              processors:
+                - add_docker_metadata: ~
+            
+            output.elasticsearch:
+              hosts: ["localhost:9200"]
+            
+            setup.kibana:
+              host: "localhost:5601"
+            EOF
+            
+            # Restart Filebeat
+            sudo systemctl restart filebeat
+            
+            # Install serve globally
+            npm install -g serve
+            
+            # Stop existing PM2 process if any
+            pm2 stop all || true
+            pm2 delete all || true
+            
+            # Start new PM2 process
+            pm2 start ecosystem.config.js
+            
+            # Save PM2 process list and environment
+            pm2 save
+            
+            # Generate startup script to restart PM2 on server reboot
+            sudo env PATH=$PATH:/usr/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ${{ secrets.EC2_USERNAME }} --hp /home/${{ secrets.EC2_USERNAME }}
+            
+            echo "Deployment completed. Logs are being sent to ELK stack."
