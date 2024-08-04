@@ -3,8 +3,8 @@ services:
   your_service:
     image: react-lol
     logging:
-      driver: json-file
+      driver: local
       options:
         max-size: "10m"
         max-file: "3"
-        log-path: "/home/ubuntu/logs/container.log"
+        path: "/home/ubuntu/logs/container.log"
