@@ -2,6 +2,7 @@ package com.example.springbootreactlol.controller;
 
 import com.example.springbootreactlol.data.ChatMessage;
 import com.example.springbootreactlol.service.ChatService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -10,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
+@Tag(name = "Chat", description = "Chat management APIs")
 public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
