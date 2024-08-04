@@ -87,10 +87,4 @@ jobs:
             # Generate startup script to restart PM2 on server reboot
             sudo env PATH=$PATH:/usr/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u ${{ secrets.EC2_USERNAME }} --hp /home/${{ secrets.EC2_USERNAME }}
             
-            # Display PM2 logs
-            pm2 logs --lines 50
-            
-            # Display Docker container logs
-            docker logs react-lol-container --tail 50
-            
             echo "Deployment completed. Check the logs above for any issues."
