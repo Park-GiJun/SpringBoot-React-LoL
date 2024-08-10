@@ -37,7 +37,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         log.info("Request URI: " + path);
 
-        if (path.startsWith("/public/") || path.startsWith("/api/auth/") || path.startsWith("/ws/")) {
+        if (path.startsWith("/ws/")) {
+            log.fatal("WebSocket Request : Skip JWT AUTHENTICATION");
+            chain.doFilter(request, response);
+            return;
+        }
+
+        if (path.startsWith("/public/") || path.startsWith("/api/auth/")) {
             log.info("Public Request: Skipping JWT authentication");
             chain.doFilter(request, response);
             return;
