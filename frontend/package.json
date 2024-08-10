@@ -32,7 +32,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:9832",
+  "proxy": "http://olm.life",
   "eslintConfig": {
     "extends": [
       "react-app",
