@@ -17,7 +17,7 @@ function ChatRoom({ isOpen, onClose, initialUsername }) {
 
     useEffect(() => {
         if (isOpen && !isSettingUsername) {
-            const socket = new SockJS('http://olm.life/ws', null, { withCredentials: true });
+            const socket = new SockJS('http://15.165.163.233:9832/ws', null, { withCredentials: true });
             const client = Stomp.over(socket);
 
             client.connect({}, () => {
