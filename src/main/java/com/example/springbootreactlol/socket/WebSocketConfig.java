@@ -7,6 +7,8 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.util.Arrays;
+
 @Log4j2
 @Configuration
 @EnableWebSocketMessageBroker
@@ -22,7 +24,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         log.info("Registering stomp endpoints");
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:3000", "http://15.165.163.233:9832", "http://15.165.163.233:9090", "http://15.165.163.233:80")
+                .setAllowedOriginPatterns(
+                        "http://localhost:3000",
+                        "http://15.165.163.233:9832",
+                        "http://15.165.163.233:9090",
+                        "http://15.165.163.233:80",
+                        "http://olm.life"
+                )
                 .withSockJS();
     }
 }
