@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/common/Button';
-import axios from 'axios';
+import Cookies from 'js-cookie';
+import api from '../../utils/api';  // api 인스턴스 import
 
 function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     const [username, setUsername] = useState('');
@@ -13,13 +14,16 @@ function LoginModal({ isOpen, onClose, onLoginSuccess }) {
         e.preventDefault();
         setError('');
         try {
-            const response = await axios.post('http://15.165.163.233:9832/api/auth/login', {
+            const response = await api.post('/api/auth/login', {
                 username,
                 password
             });
             console.log('Login successful', response.data);
 
-            localStorage.setItem('token', `Bearer ${response.data.token}`);
+            Cookies.set('token', response.data.token, {
+                expires: 7,
+                sameSite: 'lax'
+            });
 
             onLoginSuccess();
             onClose();

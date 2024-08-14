@@ -4,6 +4,7 @@ import axios from 'axios';
 import Button from '../common/Button';
 import LoginModal from '../../features/auth/LoginModal';
 import RegisterModal from '../../features/auth/RegisterModal';
+import api from '../../utils/api';  // api 인스턴스 import
 
 // TODO : 로그인시 로그인버튼, 회원가입 버튼 안보이고 로그 아웃 버튼으로 대체, 사이드바에서 현재 로그인한 닉네임, 포인트 출력
 
@@ -42,15 +43,24 @@ function Sidebar({ isOpen, setIsOpen, toggleChat }) {
 
     const fetchUserPoints = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get('http://15.165.163.233:9832/api/user/points', {
-                headers: {
-                    Authorization: token
-                }
-            });
-            setUserPoints(response.data);
+            const response = await api.get('/api/user/points');
+            console.error(response.data);
+            if (response.data !== undefined && typeof response.data === 'number') {
+                setUserPoints(response.data);
+            } else {
+                console.error('Unexpected response format:', response);
+                setUserPoints(0);
+            }
         } catch (error) {
             console.error('Error fetching user points:', error);
+            if (error.response) {
+                console.error('Server responded with error:', error.response.status, error.response.data);
+            } else if (error.request) {
+                console.error('No response received:', error.request);
+            } else {
+                console.error('Error setting up request:', error.message);
+            }
+            setUserPoints(0);
         }
     };
 

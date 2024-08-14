@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import Draggable from 'react-draggable';
+import Cookies from "js-cookie";
 
 function ChatRoom({ isOpen, onClose, initialUsername }) {
     const [stompClient, setStompClient] = useState(null);
@@ -12,34 +13,56 @@ function ChatRoom({ isOpen, onClose, initialUsername }) {
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [isMinimized, setIsMinimized] = useState(false);
     const [newMessageCount, setNewMessageCount] = useState(0);
+    const [connectionStatus, setConnectionStatus] = useState('Disconnected');
     const messageInputRef = useRef(null);
     const chatBoxRef = useRef(null);
 
     useEffect(() => {
         if (isOpen && !isSettingUsername) {
-            const socket = new SockJS('http://15.165.163.233:9832/ws', null, { withCredentials: true });
+            console.log('Attempting to connect to WebSocket...');
+            const socket = new SockJS('http://15.165.163.233:9832/ws', null, { withCredentials: false });
             const client = Stomp.over(socket);
 
-            client.connect({}, () => {
-                setStompClient(client);
-                client.subscribe('/topic/public', (message) => {
-                    const receivedMessage = JSON.parse(message.body);
-                    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-                    if (isMinimized) {
-                        setNewMessageCount((prevCount) => prevCount + 1);
-                        showNotification(receivedMessage);
-                    }
-                });
-                client.subscribe('/topic/connectedUsers', (users) => {
-                    setConnectedUsers(JSON.parse(users.body));
-                });
-                client.send("/app/chat.addUser", {}, JSON.stringify({sender: username, type: 'JOIN'}));
-            });
+            const headers = {
+                'Authorization': `Bearer ${Cookies.get('token')}`,  // 쿠키에서 토큰을 가져옴
+            };
+
+            client.debug = function(str) {
+                console.log('STOMP: ' + str);
+            };
+
+            client.connect({},
+                () => {
+                    console.log('WebSocket connection established');
+                    setConnectionStatus('Connected');
+                    setStompClient(client);
+                    client.subscribe('/topic/public', (message) => {
+                        console.log('Received message:', message);
+                        const receivedMessage = JSON.parse(message.body);
+                        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+                        if (isMinimized) {
+                            setNewMessageCount((prevCount) => prevCount + 1);
+                            showNotification(receivedMessage);
+                        }
+                    });
+                    client.subscribe('/topic/connectedUsers', (users) => {
+                        console.log('Received connected users:', users);
+                        setConnectedUsers(JSON.parse(users.body));
+                    });
+                    client.send("/app/chat.addUser", {}, JSON.stringify({sender: username, type: 'JOIN'}));
+                },
+                (error) => {
+                    console.error('WebSocket connection error:', error);
+                    setConnectionStatus('Error: ' + error);
+                }
+            );
 
             return () => {
                 if (client.connected) {
+                    console.log('Disconnecting from WebSocket...');
                     client.send("/app/chat.removeUser", {}, JSON.stringify({sender: username, type: 'LEAVE'}));
                     client.disconnect();
+                    setConnectionStatus('Disconnected');
                 }
             };
         }
@@ -100,7 +123,7 @@ function ChatRoom({ isOpen, onClose, initialUsername }) {
         <Draggable handle=".handle">
             <div className={`fixed right-4 bottom-4 bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-all duration-300 ${isMinimized ? 'w-64 h-12' : 'w-96 h-[80vh]'}`}>
                 <div className="handle bg-gray-700 p-2 flex justify-between items-center cursor-move">
-                    <h2 className="text-xl font-bold text-white">채팅방</h2>
+                    <h2 className="text-xl font-bold text-white">채팅방 ({connectionStatus})</h2>
                     <div>
                         <button onClick={toggleMinimize} className="text-white mr-2 hover:text-gray-300">
                             {isMinimized ? '□' : '—'}
