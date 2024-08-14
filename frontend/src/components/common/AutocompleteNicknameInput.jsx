@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { debounce } from 'lodash';
 
-function AutoCompleteNicknameInput({ value, onChange, placeholder, onSelectNext }) {
+function AutocompleteNicknameInput({ value, onChange, placeholder, onSelectNext }) {
     const [suggestions, setSuggestions] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -91,4 +91,4 @@ function AutoCompleteNicknameInput({ value, onChange, placeholder, onSelectNext 
     );
 }
 
-export default AutoCompleteNicknameInput;
+export default AutocompleteNicknameInput;

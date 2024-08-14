@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import * as XLSX from 'xlsx';
-import AutoCompleteNicknameInput from "../common/AutocompleteNicknameInput";
+import AutocompleteNicknameInput from "../common/AutocompleteNicknameInput";
 
 function SimpleGameModal({ onSetup }) {
     const [rounds, setRounds] = useState(1);
@@ -94,7 +94,7 @@ function SimpleGameModal({ onSetup }) {
                     <h3 className="font-bold mb-2 text-white">팀 {team}</h3>
                     {Array(5).fill().map((_, i) => (
                         <div key={i} className="mb-2">
-                            <AutoCompleteNicknameInput
+                            <AutocompleteNicknameInput
                                 value={team === 'A' ? teamA[i] : teamB[i]}
                                 onChange={(value) => handleTeamChange(team, i, value)}
                                 placeholder={`플레이어 ${i + 1}`}

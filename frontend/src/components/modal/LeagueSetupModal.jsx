@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import * as XLSX from 'xlsx';
-import AutoCompleteNicknameInput from "../common/AutocompleteNicknameInput";
+import AutocompleteNicknameInput from "../common/AutocompleteNicknameInput";
 
 function LeagueSetupModal({ teamCount, onSetup }) {
     const [teams, setTeams] = useState(Array(teamCount).fill().map(() => Array(5).fill('')));
@@ -75,7 +75,7 @@ function LeagueSetupModal({ teamCount, onSetup }) {
                 <div key={teamIndex} className="mb-4">
                     <h3 className="font-bold mb-2">팀 {teamIndex + 1}</h3>
                     {team.map((player, playerIndex) => (
-                        <AutoCompleteNicknameInput
+                        <AutocompleteNicknameInput
                             key={playerIndex}
                             value={player}
                             onChange={(value) => handlePlayerChange(teamIndex, playerIndex, value)}

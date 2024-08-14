@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AutocompleteChampionInput from "../common/AutocompleteChampionInput";
-import AutoCompleteNicknameInput from "../common/AutocompleteNicknameInput";
+import AutocompleteNicknameInput from "../common/AutocompleteNicknameInput";
 import axios from "axios";
 
 function getKoreanISOString() {
@@ -167,7 +167,7 @@ function LeagueSetup({ teams }) {
                                 <h4 className="text-white font-bold mb-2">{team === 'blueTeam' ? '블루팀' : '레드팀'}</h4>
                                 {game[`${team}Data`].map((player, playerIndex) => (
                                     <div key={playerIndex} className="grid grid-cols-5 gap-2 mb-2">
-                                        <AutoCompleteNicknameInput
+                                        <AutocompleteNicknameInput
                                             value={player.nickname}
                                             onChange={(value) => handleInputChange(gameIndex, team, playerIndex, 'nickname', value)}
                                             placeholder="닉네임"

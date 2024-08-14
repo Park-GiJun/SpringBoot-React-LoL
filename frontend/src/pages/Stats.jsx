@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PlayerStats from "../components/common/PlayerStats";
-import AutoCompleteNicknameInput from "../components/common/AutocompleteNicknameInput";
+import AutocompleteNicknameInput from "../components/common/AutocompleteNicknameInput";
 
 const PlayerSearch = () => {
     const [nickname, setNickname] = useState('');
@@ -21,7 +21,7 @@ const PlayerSearch = () => {
             <form onSubmit={handleSearch} className="mb-4">
                 <div className="flex">
                     <div className="flex-grow">
-                        <AutoCompleteNicknameInput
+                        <AutocompleteNicknameInput
                             value={nickname}
                             onChange={setNickname}
                             placeholder="닉네임을 입력하세요"
