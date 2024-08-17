@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -25,4 +28,8 @@ public class League {
 
     private boolean checkFinal;
 
+    private String betDeadLine;
+
+    @OneToMany(mappedBy = "league", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LeagueMatchRelation> leagueMatchRelations = new ArrayList<>();
 }

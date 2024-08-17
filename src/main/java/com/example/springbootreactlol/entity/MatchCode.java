@@ -20,4 +20,5 @@ public class MatchCode {
     @Column(name = "winning", nullable = false)
     private Integer winning;
 
+
 }

@@ -12,6 +12,7 @@ import League from "./pages/League";
 import MultiSearch from "./pages/MultiSearch";
 import TestPage from "./pages/Test";
 import ChatRoom from "./pages/ChatRoom";
+import Bet from "./pages/Bet";
 
 
 function App() {
@@ -110,6 +111,14 @@ function App() {
                                         <title>박기준 전용 테스트 페이지</title>
                                     </Helmet>
                                     <TestPage />
+                                </>
+                            } />
+                            <Route path="/bet" element={
+                                <>
+                                    <Helmet>
+                                        <title>베팅 | OLM</title>
+                                    </Helmet>
+                                    <Bet />
                                 </>
                             } />
                         </Routes>

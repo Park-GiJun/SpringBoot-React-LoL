@@ -71,10 +71,11 @@ function Sidebar({ isOpen, setIsOpen, toggleChat }) {
         {path: '/stats', label: '전적 검색'},
         {path: 'multiSearch', label: '멀티 서치'},
         {path: '/ranking', label: '기록실'},
-        {path: '/matches', label: '경기'},
+        // {path: '/matches', label: '경기'},
         {path: '/schedule', label: '게임 일정'},
         {path: '/league', label: '리그'},
-        {path: '/chatRoom', label: '채팅방'},
+        {path: '/bet', label: '포인트'},
+        // {path: '/chatRoom', label: '채팅방'},
         {path: '/saveGame', label: '게임저장'}
     ];
 

@@ -4,6 +4,7 @@ import com.example.springbootreactlol.entity.League;
 import com.example.springbootreactlol.projection.LeagueStatusProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -32,4 +33,7 @@ public interface LeagueRepository extends JpaRepository<League, Long> {
                 l.league_date DESC;
             """, nativeQuery = true)
     List<LeagueStatusProjection> getLeagueStatus();
+
+    @Query(value = "SELECT l.id FROM league l WHERE l.league_seq = :leagueSeq LIMIT 1", nativeQuery = true)
+    Long findIdByLeagueSeq(@Param("leagueSeq") String leagueSeq);
 }
