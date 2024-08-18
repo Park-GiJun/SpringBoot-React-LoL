@@ -19,7 +19,6 @@ configurations {
     }
 }
 
-
 repositories {
     mavenCentral()
 }
@@ -41,11 +40,32 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.2'
-
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// 모든 컨트롤러 빌드 확인 태스크 추가
+tasks.register('checkControllersBuild') {
+    doLast {
+        def controllerDir = file("build/classes/java/main/com/example/springbootreactlol/controller")
+        if (controllerDir.exists() && controllerDir.isDirectory()) {
+            def controllerFiles = controllerDir.listFiles().findAll { it.name.endsWith('.class') }
+            if (!controllerFiles.isEmpty()) {
+                println "The following controllers were successfully built:"
+                controllerFiles.each { file ->
+                    println "- ${file.name}"
+                }
+            } else {
+                println "No controller classes were found in the build output."
+            }
+        } else {
+            println "Controller directory not found: ${controllerDir.absolutePath}"
+        }
+    }
+}
+
+// 컴파일 태스크가 완료된 후 모든 컨트롤러 빌드를 로그로 출력
+compileJava.finalizedBy checkControllersBuild
