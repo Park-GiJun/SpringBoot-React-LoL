@@ -5,6 +5,7 @@ import com.example.springbootreactlol.dto.LoginRequest;
 import com.example.springbootreactlol.dto.UserRegistrationRequest;
 import com.example.springbootreactlol.dto.UserRoleChangeRequest;
 import com.example.springbootreactlol.entity.User;
+import com.example.springbootreactlol.projection.BetRankProjection;
 import com.example.springbootreactlol.security.JwtUtil;
 import com.example.springbootreactlol.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -138,5 +140,10 @@ public class UserController {
         response.addCookie(refreshTokenCookie);
 
         return ResponseEntity.ok().body("Logged out successfully");
+    }
+
+    @GetMapping("/public/betRank")
+    public ResponseEntity<List<BetRankProjection>> betRank(){
+        return ResponseEntity.ok(userService.getBetRank());
     }
 }

@@ -202,10 +202,10 @@ function Sidebar({ isOpen, setIsOpen, toggleChat }) {
             {isMobile ? (
                 <div className="bg-gray-800 text-gray-100">
                     <div className="flex justify-between items-center p-4">
-                        <div className="text-3xl font-bold flex items-center">
+                        <Link to="/" className="text-3xl font-bold flex items-center">
                             OLM
                             <p className="text-[0.6rem] ml-1">오롤몇</p>
-                        </div>
+                        </Link>
                         <button
                             className="p-1 bg-gray-800 text-white rounded-md focus:outline-none"
                             onClick={toggleNavigation}
@@ -226,14 +226,14 @@ function Sidebar({ isOpen, setIsOpen, toggleChat }) {
                     className={`fixed top-0 left-0 h-screen bg-gray-800 text-gray-100 transition-all duration-300 ${isOpen ? 'w-64' : 'w-16'} overflow-hidden flex flex-col`}
                 >
                     <div className="flex justify-between items-center p-4">
-                        <div className="text-3xl font-bold flex items-center">
+                        <Link to="/" className="text-3xl font-bold flex items-center">
                             {isOpen ? (
                                 <>
                                     OLM
                                     <p className="text-[0.6rem] ml-1">오롤몇</p>
                                 </>
                             ) : null}
-                        </div>
+                        </Link>
 
                         <button
                             className="p-1 bg-gray-800 text-white rounded-md focus:outline-none"

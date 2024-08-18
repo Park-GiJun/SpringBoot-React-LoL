@@ -2,12 +2,15 @@ package com.example.springbootreactlol.service;
 
 import com.example.springbootreactlol.data.UserRole;
 import com.example.springbootreactlol.entity.User;
+import com.example.springbootreactlol.projection.BetRankProjection;
 import com.example.springbootreactlol.repository.GameDataRepository;
 import com.example.springbootreactlol.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -63,5 +66,9 @@ public class UserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return user.getPoint();
+    }
+
+    public List<BetRankProjection> getBetRank() {
+        return userRepository.findAllByOrderByPointDesc();
     }
 }

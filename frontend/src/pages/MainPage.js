@@ -8,6 +8,7 @@ function MainPage() {
     const [rankings, setRankings] = useState([]);
     const [statistics, setStatistics] = useState([]);
     const [recentGames, setRecentGames] = useState([]);
+    const [betRank, setBetRank] = useState([]);
     const [loading, setLoading] = useState(true);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
@@ -18,11 +19,13 @@ function MainPage() {
                 const statisticsResponse = await axios.get('http://15.165.163.233:9832/public/statistics');
                 const recentGamesResponse = await axios.get('http://15.165.163.233:9832/public/recent-games');
                 const announcementResponse = await axios.get('http://15.165.163.233:9832/public/announcement');
+                const betRankResponse = await axios.get('http://15.165.163.233:9832/public/betRank');
 
                 setAnnouncement(announcementResponse.data);
                 setRankings(rankingResponse.data);
                 setStatistics(statisticsResponse.data[0]);
                 setRecentGames(recentGamesResponse.data);
+                setBetRank(betRankResponse.data);
                 setLoading(false);
             } catch (error) {
                 console.error('데이터를 가져오는데 실패했습니다:', error);
@@ -74,7 +77,7 @@ function MainPage() {
     }
 
     return (
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-2">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-2">
             <div className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow max-h-[40vh] flex flex-col">
                 <h2 className="text-lg sm:text-xl font-bold mb-2">공지사항</h2>
                 <ul className="list-disc pl-5 overflow-y-auto flex-grow">
@@ -86,12 +89,35 @@ function MainPage() {
                     ))}
                 </ul>
             </div>
+            <div className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow max-h-[40vh] flex flex-col">
+                <h2 className="text-lg sm:text-xl font-bold mb-2 text-center">승부예측의 신</h2>
+                {betRank.length > 0 ? (
+                    <div className="overflow-y-auto flex-grow text-center">
+                        <div
+                            className="grid grid-cols-2 gap-1 sm:gap-2 mb-2 text-xs sm:text-sm sticky top-0 bg-gray-800">
+                            <SortableHeader label="이름" sortKey="nickname"/>
+                            <SortableHeader label="보유 포인트" sortKey="points"/>
+                        </div>
+                        {betRank.map((stat, index) => (
+                            <div key={index}
+                                 className="grid grid-cols-2 gap-1 sm:gap-2 border-t border-gray-700 py-1 sm:py-2 text-xs">
+                                <div className={getNicknameClass(stat.nickname)}
+                                     title={stat.nickname}>{stat.nickname}</div>
+                                <div>{parseInt(stat.point).toLocaleString()}</div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-center">랭킹 데이터가 없습니다.</p>
+                )}
+            </div>
 
             <div className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow max-h-[40vh] flex flex-col">
                 <h2 className="text-lg sm:text-xl font-bold mb-2 text-center">랭킹</h2>
                 {rankings.length > 0 ? (
                     <div className="overflow-y-auto flex-grow text-center">
-                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-1 sm:gap-2 mb-2 text-xs sm:text-sm sticky top-0 bg-gray-800">
+                        <div
+                            className="grid grid-cols-3 sm:grid-cols-6 gap-1 sm:gap-2 mb-2 text-xs sm:text-sm sticky top-0 bg-gray-800">
                             <SortableHeader label="닉네임" sortKey="nickname"/>
                             <SortableHeader label="KDA" sortKey="kda"/>
                             <SortableHeader label="승률" sortKey="winningPercentage"/>
@@ -100,8 +126,10 @@ function MainPage() {
                             <SortableHeader label="게임 수" sortKey="playedGames"/>
                         </div>
                         {rankings.map((stat, index) => (
-                            <div key={index} className="grid grid-cols-3 sm:grid-cols-6 gap-1 sm:gap-2 border-t border-gray-700 py-1 sm:py-2 text-xs">
-                                <div className={getNicknameClass(stat.nickname)} title={stat.nickname}>{stat.nickname}</div>
+                            <div key={index}
+                                 className="grid grid-cols-3 sm:grid-cols-6 gap-1 sm:gap-2 border-t border-gray-700 py-1 sm:py-2 text-xs">
+                                <div className={getNicknameClass(stat.nickname)}
+                                     title={stat.nickname}>{stat.nickname}</div>
                                 <div>{stat.kda.toFixed(2)}</div>
                                 <div>{stat.winningPercentage.toFixed(2)}%</div>
                                 <div className="truncate" title={stat.mostChampion}>{stat.mostChampion}</div>
@@ -148,7 +176,7 @@ function MainPage() {
                     <p className="text-center text-red-500">통계 데이터를 불러오는 중 오류가 발생했습니다.</p>
                 )}
             </div>
-            <RecentGames recentGames={recentGames} />
+            <RecentGames recentGames={recentGames}/>
         </div>
     );
 }

@@ -1,12 +1,14 @@
 package com.example.springbootreactlol.repository;
 
 import com.example.springbootreactlol.entity.User;
+import com.example.springbootreactlol.projection.BetRankProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -18,4 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("update User u set u.point = u.point - ?1 where u.username = ?2")
     void reducePoint(@NonNull int point, String username);
 
+    @Query(value = "SELECT u.nick_name as nickname, u.point FROM users u WHERE role != 'MASTER' ORDER BY u.point DESC", nativeQuery = true)
+    List<BetRankProjection> findAllByOrderByPointDesc();
 }
