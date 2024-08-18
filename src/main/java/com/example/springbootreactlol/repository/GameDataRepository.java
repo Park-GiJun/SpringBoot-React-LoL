@@ -284,4 +284,6 @@ SELECT * from game_data g LEFT JOIN champion c on g.champion = c.champion WHERE 
                                 LIMIT 6;
            """)
     List<ChampionStatWithEnglishNameProjection> findChampionStatsTop3(@Param("nickname") String nickname);
+
+    int countByNickname(String nickName);
 }

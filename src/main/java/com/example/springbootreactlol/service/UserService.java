@@ -2,6 +2,7 @@ package com.example.springbootreactlol.service;
 
 import com.example.springbootreactlol.data.UserRole;
 import com.example.springbootreactlol.entity.User;
+import com.example.springbootreactlol.repository.GameDataRepository;
 import com.example.springbootreactlol.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,16 +14,21 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final GameDataRepository gameDataRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, GameDataRepository gameDataRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.gameDataRepository = gameDataRepository;
     }
 
     public User registerUser(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("Username is already taken");
         }
+        int matchingNickNameCount = gameDataRepository.countByNickname(user.getNickName());
+        int points = matchingNickNameCount * 100;
+        user.setPoint(points);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(UserRole.USER);
         return userRepository.save(user);
