@@ -1,6 +1,7 @@
 package com.example.springbootreactlol.controller;
 
 import com.example.springbootreactlol.data.BetDTO;
+import com.example.springbootreactlol.data.EndBettingRequest;
 import com.example.springbootreactlol.dto.LeagueUploadDTO;
 import com.example.springbootreactlol.entity.Bet;
 import com.example.springbootreactlol.entity.TeamMember;
@@ -10,9 +11,11 @@ import com.example.springbootreactlol.service.LeagueService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Log4j2
@@ -58,6 +61,20 @@ public class BetController {
         return ResponseEntity.ok(betService.doBet(betDTO));
     }
 
+    @PostMapping("/api/admin/endBetting/{leagueSeq}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MASTER')")
+    public ResponseEntity<?> endBetting(@PathVariable String leagueSeq,
+                                        @RequestBody EndBettingRequest request) {
+        log.info("Ending betting for league: {}", leagueSeq);
+        try {
+            betService.processBettingResults(leagueSeq, request.getWinningTeamId());
+            return ResponseEntity.ok().body("Betting ended successfully for league: " + leagueSeq);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error ending betting: " + e.getMessage());
+        }
+    }
+
+
     @GetMapping("/public/{leagueId}/bets")
     public ResponseEntity<List<BetResponseProjection>> getBetsByLeague(@PathVariable String leagueId) {
         log.info("Retrieving bets for league: {}", leagueId);
@@ -66,5 +83,13 @@ public class BetController {
             log.info("Bet: {}", bet);
         }
         return ResponseEntity.ok(bets);
+    }
+
+    @GetMapping("/api/user/betRate/odds/{leagueId}")
+    public ResponseEntity<?> getOdds(@PathVariable String leagueId) {
+        log.info("Retrieving odds for league: {}", leagueId);
+        Map<Long, BetService.OddsAndPoints> odds = betService.calculateOddsAndPoints(leagueId);
+        log.info("Odds: {}", odds);
+        return ResponseEntity.ok(odds);
     }
 }

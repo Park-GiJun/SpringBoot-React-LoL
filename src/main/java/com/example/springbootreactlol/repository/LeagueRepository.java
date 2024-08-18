@@ -3,10 +3,13 @@ package com.example.springbootreactlol.repository;
 import com.example.springbootreactlol.entity.League;
 import com.example.springbootreactlol.projection.LeagueStatusProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LeagueRepository extends JpaRepository<League, Long> {
 
@@ -36,4 +39,9 @@ public interface LeagueRepository extends JpaRepository<League, Long> {
 
     @Query(value = "SELECT l.id FROM league l WHERE l.league_seq = :leagueSeq LIMIT 1", nativeQuery = true)
     Long findIdByLeagueSeq(@Param("leagueSeq") String leagueSeq);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE League l SET l.betDeadLine = FUNCTION('DATE_FORMAT', CURRENT_TIMESTAMP, '%Y-%m-%dT%H:%i:%s') WHERE l.leagueSeq = :leagueSeq")
+    int updateBetDeadLine(@Param("leagueSeq") String leagueSeq);
 }

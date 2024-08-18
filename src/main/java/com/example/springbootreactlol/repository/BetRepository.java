@@ -27,7 +27,18 @@ public interface BetRepository extends JpaRepository<Bet, Long> {
 
 
     @Query(value = "SELECT b.bet_amount, b.bet_time, b.league_id, b.user_name, (SELECT team_name FROM teams t WHERE t.league_id = b.league_id AND t.id = b.team_id LIMIT 1 ) AS teamId FROM bets b WHERE b.league_id = :leagueId ORDER BY b.bet_time", nativeQuery = true)
-    List<BetResponseProjection> findByLeagueId(Long leagueId);
+    List<BetResponseProjection> findByLeagueIds(Long leagueId);
+
+    @Query(value = """
+            SELECT b.*
+            FROM bets b
+                     JOIN league l ON b.league_id = l.id
+            WHERE l.league_seq = :leagueSeq
+            """, nativeQuery = true)
+    List<Bet> findLatestBetsByLeagueIds(String leagueSeq);
+
+    List<Bet> findByLeague_LeagueSeqAndTeam_Id(String leagueSeq, Long teamId);
+
 }
 
 
