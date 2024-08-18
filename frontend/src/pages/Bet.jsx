@@ -39,7 +39,7 @@ function Bet() {
     const fetchLeagues = async () => {
         try {
             const token = Cookies.get('token');
-            const response = await axios.get('http://localhost:9832/api/user/betList', {
+            const response = await axios.get('http://15.165.163.233:9832/api/user/betList', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
