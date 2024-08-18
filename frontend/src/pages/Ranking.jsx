@@ -39,13 +39,7 @@ function ChampionTierList() {
     };
 
     const sortedChampions = React.useMemo(() => {
-        const tierOrder = { 'Tier 1': 1, 'Tier 2': 2, 'Tier 3': 3, 'Tier 4': 4, 'Tier 5': 5 };
-
         const comparator = (a, b) => {
-            if (tierOrder[a.tier] !== tierOrder[b.tier]) {
-                return tierOrder[a.tier] - tierOrder[b.tier];
-            }
-
             if (b[orderBy] < a[orderBy]) {
                 return -1;
             }

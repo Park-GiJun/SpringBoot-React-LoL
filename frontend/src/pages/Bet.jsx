@@ -38,7 +38,12 @@ function Bet() {
 
     const fetchLeagues = async () => {
         try {
-            const response = await axios.get('http://localhost:9832/public/betList');
+            const token = Cookies.get('token');
+            const response = await axios.get('http://localhost:9832/api/user/betList', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             const groupedLeagues = groupLeaguesByMatchCode(response.data);
             console.log(groupedLeagues);
             setLeagues(groupedLeagues);
@@ -49,7 +54,7 @@ function Bet() {
 
     const fetchBets = async (leagueId) => {
         try {
-            const betResponse = await axios.get(`http://localhost:9832/public/${leagueId}/bets`);
+            const betResponse = await axios.get(`http://15.165.163.233:9832/public/${leagueId}/bets`);
             console.log("betResponse", betResponse.data);
             setBets(betResponse.data);
         } catch (error) {
@@ -125,7 +130,7 @@ function Bet() {
             }
 
             const response = await axios.post(
-                'http://localhost:9832/api/admin/uploadLeague',
+                'http://15.165.163.233:9832/api/admin/uploadLeague',
                 teamsData,
                 {
                     headers: {
@@ -173,7 +178,7 @@ function Bet() {
         const id = jwtDecode(token).sub;
         try {
 
-            const response = await axios.post('http://localhost:9832/api/user/bet', {
+            const response = await axios.post('http://15.165.163.233:9832/api/user/bet', {
                 amount: betAmount,
                 selectedTeamId,
                 selectedLeagueId,

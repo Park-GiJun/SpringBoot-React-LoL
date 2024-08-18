@@ -47,7 +47,7 @@ public class BetController {
         return ResponseEntity.ok("League uploaded successfully");
     }
 
-    @GetMapping("/public/betList")
+    @GetMapping("/api/user/betList")
     public ResponseEntity<?> betList() {
         return ResponseEntity.ok(betService.getLeagueTeamMembers());
     }
@@ -60,6 +60,7 @@ public class BetController {
 
     @GetMapping("/public/{leagueId}/bets")
     public ResponseEntity<List<BetResponseProjection>> getBetsByLeague(@PathVariable String leagueId) {
+        log.info("Retrieving bets for league: {}", leagueId);
         List<BetResponseProjection> bets = betService.findBetsByLeagueId(leagueId);
         for (BetResponseProjection bet : bets) {
             log.info("Bet: {}", bet);
