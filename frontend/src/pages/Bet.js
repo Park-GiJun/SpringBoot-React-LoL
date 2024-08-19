@@ -150,7 +150,7 @@ function Bet() {
                     teamName,
                     teamId: teamData.teamId,  // teamId 반환
                     members: teamData.members.sort((a, b) => {
-                        const positionOrder = ['TOP', 'JUNGLE', 'MID', 'ADC', 'SUPPORT'];
+                        const positionOrder = ['Top', 'Jungle', 'Mid', 'ADC', 'Support'];
                         return positionOrder.indexOf(a.position) - positionOrder.indexOf(b.position);
                     })
                 }))

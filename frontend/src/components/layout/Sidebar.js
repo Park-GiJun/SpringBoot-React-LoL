@@ -76,7 +76,8 @@ function Sidebar({ isOpen, setIsOpen, toggleChat }) {
         {path: '/league', label: '리그'},
         {path: '/bet', label: '포인트'},
         // {path: '/chatRoom', label: '채팅방'},
-        {path: '/saveGame', label: '게임저장'}
+        {path: '/saveGame', label: '게임저장'},
+        {path: '/shop', label: '포인트샵'},
     ];
 
     const handleTestButtonClick = () => {

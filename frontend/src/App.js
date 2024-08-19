@@ -13,6 +13,7 @@ import MultiSearch from "./pages/MultiSearch";
 import TestPage from "./pages/Test";
 import ChatRoom from "./pages/ChatRoom";
 import Bet from "./pages/Bet";
+import NicknameDecorationShop from "./pages/NicknameDecorationShop";
 
 
 function App() {
@@ -119,6 +120,14 @@ function App() {
                                         <title>베팅 | OLM</title>
                                     </Helmet>
                                     <Bet />
+                                </>
+                            } />
+                            <Route path="/shop" element={
+                                <>
+                                    <Helmet>
+                                        <title>포인트샵 | OLM</title>
+                                    </Helmet>
+                                    <NicknameDecorationShop />
                                 </>
                             } />
                         </Routes>

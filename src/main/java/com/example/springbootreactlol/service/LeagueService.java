@@ -3,6 +3,8 @@ package com.example.springbootreactlol.service;
 import com.example.springbootreactlol.dto.LeagueUploadDTO;
 import com.example.springbootreactlol.entity.*;
 import com.example.springbootreactlol.projection.LeagueStatusProjection;
+import com.example.springbootreactlol.projection.LeaguesProjection;
+import com.example.springbootreactlol.projection.TeamMemberProjection;
 import com.example.springbootreactlol.repository.*;
 import com.example.springbootreactlol.utils.MatchCodeGenerator;
 import jakarta.transaction.Transactional;
@@ -93,5 +95,13 @@ public class LeagueService {
     private String generateLeagueSeq() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
                 + String.format("%03d", (int) (Math.random() * 1000));
+    }
+
+    public List<LeaguesProjection> getLeaguesList() {
+        return leagueRepository.getLeagues();
+    }
+
+    public List<TeamMemberProjection> getSelectedLeagueDetail(Long leagueId) {
+        return teamMemberRepository.findTeamMembersByLeagueIdOrderedByTeamAndPosition(leagueId);
     }
 }

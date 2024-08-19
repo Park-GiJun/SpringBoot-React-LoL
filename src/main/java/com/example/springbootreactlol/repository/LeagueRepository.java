@@ -2,6 +2,7 @@ package com.example.springbootreactlol.repository;
 
 import com.example.springbootreactlol.entity.League;
 import com.example.springbootreactlol.projection.LeagueStatusProjection;
+import com.example.springbootreactlol.projection.LeaguesProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -44,4 +45,8 @@ public interface LeagueRepository extends JpaRepository<League, Long> {
     @Modifying
     @Query("UPDATE League l SET l.betDeadLine = FUNCTION('DATE_FORMAT', CURRENT_TIMESTAMP, '%Y-%m-%dT%H:%i:%s') WHERE l.leagueSeq = :leagueSeq")
     int updateBetDeadLine(@Param("leagueSeq") String leagueSeq);
+
+    @Query(value = "SELECT league_name, id FROM league GROUP BY league_seq", nativeQuery = true)
+    List<LeaguesProjection> getLeagues();
+
 }
