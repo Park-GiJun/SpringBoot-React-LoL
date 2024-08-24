@@ -22,4 +22,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT u.nick_name as nickname, u.point FROM users u WHERE role != 'MASTER' ORDER BY u.point DESC", nativeQuery = true)
     List<BetRankProjection> findAllByOrderByPointDesc();
+
+    @Transactional
+    @Modifying
+    @Query("update User u set u.nickName = ?1, u.point = ?2")
+    int updateNickNameAndPointBy(String nickName, int point);
+
+    @Query(value = "SELECT * FROM users WHERE username =?1", nativeQuery = true)
+    User findByUsername2(String username);
 }

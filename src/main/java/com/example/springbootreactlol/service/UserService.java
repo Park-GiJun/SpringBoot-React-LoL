@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -46,6 +47,10 @@ public class UserService {
         userRepository.save(user);
 
         return user;
+    }
+
+    public Optional<User> findByUsernameInfo(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public User changeUserRole(String username, UserRole newRole) {

@@ -8,7 +8,7 @@ const DecoratedNickname = ({ nickname }) => {
     useEffect(() => {
         const fetchDecorations = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/public/nickname-decoration/${nickname}`);
+                const response = await axios.get(`http://15.165.163.233:9832/public/nickname-decoration/${nickname}`);
                 setDecorations(response.data);
             } catch (error) {
                 console.error('Failed to fetch nickname decorations:', error);
@@ -22,39 +22,48 @@ const DecoratedNickname = ({ nickname }) => {
 
     const applyDecorations = () => {
         let style = {};
-        let classes = '';
-        let icon = null;
+        let classes = [];
+        let icons = [];
 
         decorations.forEach(decoration => {
-            const decorationStyle = JSON.parse(decoration.style);
+            if (decoration.useFlag) {
+                const decorationStyle = JSON.parse(decoration.style.style);
 
-            if (decorationStyle.previewClass) {
-                classes += ` ${decorationStyle.previewClass}`;
-            }
-
-            if (decorationStyle.previewStyle) {
-                style = { ...style, ...decorationStyle.previewStyle };
-            }
-
-            if (decorationStyle.previewContent) {
-                icon = decorationStyle.previewContent;
+                Object.entries(decorationStyle).forEach(([key, value]) => {
+                    if (key === 'previewContent') {
+                        icons.push(value);
+                    } else if (key === 'previewClass') {
+                        classes.push(value);
+                    } else {
+                        style[key] = value;
+                    }
+                });
             }
         });
 
-        return { style, classes: classes.trim(), icon };
+        return { style, classes: classes.join(' '), icons };
     };
 
     if (loading) {
         return <span className="text-gray-400">Loading...</span>;
     }
 
-    const { style, classes, icon } = applyDecorations();
+    const { style, classes, icons } = applyDecorations();
+
+    const renderIcon = (icon, index) => {
+        if (icon.startsWith('<svg')) {
+            return <span key={index} dangerouslySetInnerHTML={{ __html: icon }} />;
+        }
+        return <span key={index}>{icon}</span>;
+    };
 
     return (
-        <span className={`${classes} truncate`} style={style} title={nickname}>
-            {icon && <span className="mr-1">{icon}</span>}
-            {nickname}
-        </span>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <span className={`decorated-nickname ${classes}`} style={{ ...style, display: 'flex', alignItems: 'center' }} title={nickname}>
+                {icons.map((icon, index) => renderIcon(icon, index))}
+                <span>{nickname}</span>
+            </span>
+        </div>
     );
 };
 

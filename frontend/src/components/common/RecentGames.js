@@ -1,4 +1,5 @@
 import React from 'react';
+import DecoratedNickname from "./DecorateNickname";
 
 function RecentGames({ recentGames }) {
     return (
@@ -45,7 +46,7 @@ function TeamDisplay({ team, isWinner, teamColor }) {
                 return player && (
                     <div key={player.id}
                          className="text-sm sm:text-base mb-2 flex justify-between items-center py-2 sm:py-3">
-                        <span className="w-1/3 truncate">{player.nickname}</span>
+                        <span className="w-1/3 truncate"><DecoratedNickname nickname={player.nickname}/> </span>
                         <span className="w-1/3 truncate text-center">{player.champion}</span>
                         <span className="w-1/3 text-right">{player.kills}/{player.deaths}/{player.assists}</span>
                     </div>

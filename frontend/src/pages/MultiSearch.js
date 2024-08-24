@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import LoadingSpinner from "../components/common/Loading";
+import DecoratedNickname from "../components/common/DecorateNickname";
 
 function MultiSearch() {
     const [searchInput, setSearchInput] = useState('');
@@ -67,7 +68,7 @@ function MultiSearch() {
                         <tbody>
                         {Object.entries(searchResults).map(([nickName, stats]) => (
                             <tr key={nickName} className="border-b border-gray-700 hover:bg-gray-750">
-                                <td className="p-3 text-white font-semibold">{nickName}</td>
+                                <td className="p-3 text-white font-semibold"><DecoratedNickname nickname={nickName} /></td>
                                 <td className="p-3">
                                     <div className="flex flex-wrap gap-4">
                                         {stats.map((stat, index) => (

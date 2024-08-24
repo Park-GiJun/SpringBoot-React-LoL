@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import LoadingSpinner from "../components/common/Loading";
 import RecentGames from "../components/common/RecentGames";
+import DecoratedNickname from "../components/common/DecorateNickname";
 
 function MainPage() {
     const [announcement, setAnnouncement] = useState([]);
@@ -35,6 +36,8 @@ function MainPage() {
 
         fetchData();
     }, []);
+
+
 
     const sortRankings = (key) => {
         let direction = 'ascending';
@@ -102,7 +105,9 @@ function MainPage() {
                             <div key={index}
                                  className="grid grid-cols-2 gap-1 sm:gap-2 border-t border-gray-700 py-1 sm:py-2 text-xs">
                                 <div className={getNicknameClass(stat.nickname)}
-                                     title={stat.nickname}>{stat.nickname}</div>
+                                     title={stat.nickname}><DecoratedNickname
+                                    nickname={stat.nickname}
+                                /></div>
                                 <div>{parseInt(stat.point).toLocaleString()}</div>
                             </div>
                         ))}
@@ -129,7 +134,9 @@ function MainPage() {
                             <div key={index}
                                  className="grid grid-cols-3 sm:grid-cols-6 gap-1 sm:gap-2 border-t border-gray-700 py-1 sm:py-2 text-xs">
                                 <div className={getNicknameClass(stat.nickname)}
-                                     title={stat.nickname}>{stat.nickname}</div>
+                                     title={stat.nickname}><DecoratedNickname
+                                    nickname={stat.nickname}
+                                /></div>
                                 <div>{stat.kda.toFixed(2)}</div>
                                 <div>{stat.winningPercentage.toFixed(2)}%</div>
                                 <div className="truncate" title={stat.mostChampion}>{stat.mostChampion}</div>

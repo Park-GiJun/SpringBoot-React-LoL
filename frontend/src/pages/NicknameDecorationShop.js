@@ -2,6 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import axios from 'axios';
 import LoadingSpinner from "../components/common/Loading";
 import { ShoppingCart, Sparkles } from 'lucide-react';
+import Cookies from "js-cookie";
+import api from "../utils/api";
 
 const NicknameDecorationShop = () => {
     const [cart, setCart] = useState([]);
@@ -11,11 +13,12 @@ const NicknameDecorationShop = () => {
     const [shopItems, setShopItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userPoints, setUserPoints] = useState(0);
 
     useEffect(() => {
         const fetchStyles = async () => {
             try {
-                const response = await axios.get('http://localhost:9832/public/getAllStyles');
+                const response = await axios.get('http://15.165.163.233:9832/public/getAllStyles');
                 setShopItems(response.data.map(item => ({
                     id: item.styleId,
                     name: item.name,
@@ -31,9 +34,25 @@ const NicknameDecorationShop = () => {
                 setLoading(false);
             }
         };
-
+        fetchUserPoints();
         fetchStyles();
     }, []);
+
+    const fetchUserPoints = async () => {
+        const token = Cookies.get('token');
+        if (!token) return;
+
+        try {
+            const response = await api.get('http://15.165.163.233:9832/api/user/points', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setUserPoints(response.data);
+        } catch (error) {
+            console.error('Error fetching user points:', error);
+        }
+    };
 
     const categorizedItems = useMemo(() => {
         return shopItems.reduce((acc, item) => {
@@ -66,11 +85,55 @@ const NicknameDecorationShop = () => {
         setCart(prev => prev.filter(item => item.id !== itemId));
     };
 
-    const checkout = () => {
-        alert(`Purchase successful! Total: ${cart.reduce((sum, item) => sum + item.price, 0)} points`);
-        console.log(cart);
-        setCart([]);
+    const checkout = async () => {
+        const token = Cookies.get('token');
+        if (!token) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+
+        const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+        console.log("User Points:", userPoints, "Total Price:", totalPrice);
+        if (totalPrice > userPoints) {
+            alert('포인트가 부족합니다.');
+            return;
+        }
+
+        try {
+            const response = await axios.post('http://15.165.163.233:9832/user/purchaseStyles',
+                { styleIds: cart.map(item => item.id) },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (response.data.success) {
+                alert('구매가 완료되었습니다!');
+                setCart([]);
+                setUserPoints(prevPoints => prevPoints - totalPrice);
+                fetchUserPoints();
+            } else {
+                alert(response.data.message || '구매 중 오류가 발생했습니다.');
+            }
+        } catch (error) {
+            console.error('Purchase error:', error);
+            if (error.response) {
+                if (error.response.status === 401) {
+                    Cookies.remove('token');
+                    alert('세션이 만료되었습니다. 다시 로그인해 주세요.');
+                } else {
+                    alert(error.response.data.message || '구매 처리 중 오류가 발생했습니다. 다시 시도해 주세요.');
+                }
+            } else if (error.request) {
+                alert('서버에 연결할 수 없습니다. 네트워크 연결을 확인해 주세요.');
+            } else {
+                alert('구매 처리 중 오류가 발생했습니다. 다시 시도해 주세요.');
+            }
+        }
     };
+
 
     const getPreviewStyle = () => {
         return shopItems
@@ -94,11 +157,24 @@ const NicknameDecorationShop = () => {
     };
 
     const getPreviewContent = () => {
-        const iconItem = shopItems.find(item =>
-            item.style.previewContent && item.style && selectedEffects[item.type] === item.id && item.type === 'icon'
-        );
-        return iconItem ? iconItem.style.previewContent : '';
+        const contents = shopItems
+            .filter(item => selectedEffects[item.type] === item.id)
+            .map(item => item.style && item.style.previewContent)
+            .filter(Boolean);
+
+        return contents.map((content, index) => {
+            if (typeof content === 'string' && content.startsWith('<svg')) {
+                return (
+                    <span key={index} className="nickname-container">
+                    <span>{nickname}</span>
+                    <span dangerouslySetInnerHTML={{ __html: content }} />
+                </span>
+                );
+            }
+            return <span key={index}>{content}</span>;
+        });
     };
+
 
 
     if (loading) {

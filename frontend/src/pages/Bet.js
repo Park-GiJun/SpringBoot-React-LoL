@@ -7,6 +7,7 @@ import Button from '../components/common/Button';
 import ExcelUploadModal from '../components/modal/ExcelUploadModal';
 import SockJS from "sockjs-client";
 import {Stomp} from "@stomp/stompjs";
+import DecoratedNickname from "../components/common/DecorateNickname";
 
 function Bet() {
     const [userInfo, setUserInfo] = useState(null);
@@ -442,7 +443,10 @@ function Bet() {
                                                 <div className="flex justify-between">
                                                     <div>
                                                         <h3 className="text-lg font-semibold">팀: {bet.teamId}</h3>
-                                                        <p>유저: {bet.userName}</p>
+                                                        <p>유저: </p>
+                                                        <DecoratedNickname
+                                                            nickname={bet.userName}
+                                                        />
                                                     </div>
                                                     <div>
                                                         <p>베팅 금액: {bet.betAmount}</p>

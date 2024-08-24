@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import LoadingSpinner from "../components/common/Loading";
+import DecoratedNickname from "../components/common/DecorateNickname";
 
 function ChampionTierList() {
     const [champions, setChampions] = useState([]);
@@ -110,7 +111,7 @@ function ChampionTierList() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 text-center">{champion.winRate.toFixed(2)}%</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 text-center">{champion.played}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 text-center">{champion.kda.toFixed(2)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 text-center">{champion.mostPlayedBy}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 text-center"><DecoratedNickname nickname={champion.mostPlayedBy}/></td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 text-center">{champion.playersCount}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 text-center">{champion.banRate.toFixed(2)}%</td>
                     </tr>

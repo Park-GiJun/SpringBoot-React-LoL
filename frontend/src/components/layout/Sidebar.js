@@ -4,7 +4,9 @@ import axios from 'axios';
 import Button from '../common/Button';
 import LoginModal from '../../features/auth/LoginModal';
 import RegisterModal from '../../features/auth/RegisterModal';
-import api from '../../utils/api';  // api 인스턴스 import
+import api from '../../utils/api';
+import Cookies from "js-cookie";
+import DecoratedNickname from "../common/DecorateNickname";  // api 인스턴스 import
 
 // TODO : 로그인시 로그인버튼, 회원가입 버튼 안보이고 로그 아웃 버튼으로 대체, 사이드바에서 현재 로그인한 닉네임, 포인트 출력
 
@@ -17,6 +19,7 @@ function Sidebar({ isOpen, setIsOpen, toggleChat }) {
     const [isMobile, setIsMobile] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userPoints, setUserPoints] = useState(0);
+    const [userNickname, setUserNickname] = useState('');
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -33,13 +36,30 @@ function Sidebar({ isOpen, setIsOpen, toggleChat }) {
     useEffect(() => {
         if (isLoggedIn) {
             fetchUserPoints();
+            fetchUserInfo();
         }
     }, [isLoggedIn]);
 
     const checkLoginStatus = () => {
-        const token = localStorage.getItem('token');
+        const token = Cookies.get('token');
         setIsLoggedIn(!!token);
     };
+
+    const fetchUserInfo = async () => {
+        try {
+            const response = await api.get('/api/user/info');
+            setUserNickname(response.data.nickName);  // 'nickname'이 아닌 'nickName'
+            setUserPoints(response.data.point);       // 'points'가 아닌 'point'
+            // 추가적으로 필요한 정보가 있다면 여기서 상태를 업데이트할 수 있습니다.
+            // 예: setUsername(response.data.username);
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+            if (error.response && error.response.status === 401) {
+                handleLogout();
+            }
+        }
+    };
+
 
     const fetchUserPoints = async () => {
         try {
@@ -108,7 +128,10 @@ function Sidebar({ isOpen, setIsOpen, toggleChat }) {
             return (
                 <>
                     <div className="text-center mb-2">
-                        <p>포인트: {userPoints}</p>
+                        {userNickname && (
+                            <DecoratedNickname nickname={userNickname} />
+                        )}
+                        <p className="mt-1">포인트: {userPoints}</p>
                     </div>
                     <Button
                         onClick={handleLogout}

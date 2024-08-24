@@ -1,9 +1,7 @@
 package com.example.springbootreactlol.controller;
 
-import com.example.springbootreactlol.data.UserRole;
 import com.example.springbootreactlol.dto.LoginRequest;
 import com.example.springbootreactlol.dto.UserRegistrationRequest;
-import com.example.springbootreactlol.dto.UserRoleChangeRequest;
 import com.example.springbootreactlol.entity.User;
 import com.example.springbootreactlol.projection.BetRankProjection;
 import com.example.springbootreactlol.security.JwtUtil;
@@ -18,17 +16,16 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Log4j2
 @RestController
@@ -130,6 +127,18 @@ public class UserController {
         return ResponseEntity.ok(points);
     }
 
+    @GetMapping("/api/user/info")
+    public ResponseEntity<Optional<User>> getUserInfo(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            log.warn("Unauthorized access attempt to /api/auth/info");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String username = authentication.getName();
+        log.info("Fetching user info for user: {}", username);
+        Optional<User> user = userService.findByUsernameInfo(username);
+        return ResponseEntity.ok(user);
+    }
+
     @PostMapping("/api/auth/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         Cookie refreshTokenCookie = new Cookie("refreshToken", null);
@@ -146,4 +155,7 @@ public class UserController {
     public ResponseEntity<List<BetRankProjection>> betRank(){
         return ResponseEntity.ok(userService.getBetRank());
     }
+
+
+
 }
