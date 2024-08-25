@@ -14,6 +14,7 @@ import TestPage from "./pages/Test";
 import ChatRoom from "./pages/ChatRoom";
 import Bet from "./pages/Bet";
 import NicknameDecorationShop from "./pages/NicknameDecorationShop";
+import MyPage from "./pages/MyPage";
 
 
 function App() {
@@ -128,6 +129,14 @@ function App() {
                                         <title>포인트샵 | OLM</title>
                                     </Helmet>
                                     <NicknameDecorationShop />
+                                </>
+                            } />
+                            <Route path="/myPage" element={
+                                <>
+                                    <Helmet>
+                                        <title>마이 페이지 | OLM</title>
+                                    </Helmet>
+                                    <MyPage />
                                 </>
                             } />
                         </Routes>

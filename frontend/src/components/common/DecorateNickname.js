@@ -52,9 +52,34 @@ const DecoratedNickname = ({ nickname }) => {
 
     const renderIcon = (icon, index) => {
         if (icon.startsWith('<svg')) {
-            return <span key={index} dangerouslySetInnerHTML={{ __html: icon }} />;
+            // Parse the SVG string to modify its attributes
+            const parser = new DOMParser();
+            const svgDoc = parser.parseFromString(icon, 'image/svg+xml');
+            const svgElement = svgDoc.documentElement;
+
+            // Set width and height attributes
+            svgElement.setAttribute('width', '20');
+            svgElement.setAttribute('height', '20');
+
+            // Convert back to string
+            const modifiedSvg = new XMLSerializer().serializeToString(svgElement);
+
+            return (
+                <span
+                    key={index}
+                    className="icon-wrapper"
+                    style={{
+                        marginRight: '4px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        width: '20px',
+                        height: '20px'
+                    }}
+                    dangerouslySetInnerHTML={{ __html: modifiedSvg }}
+                />
+            );
         }
-        return <span key={index}>{icon}</span>;
+        return <span key={index} style={{ marginRight: '4px' }}>{icon}</span>;
     };
 
     return (

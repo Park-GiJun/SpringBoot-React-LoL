@@ -4,6 +4,8 @@ import LoadingSpinner from "../components/common/Loading";
 import { ShoppingCart, Sparkles } from 'lucide-react';
 import Cookies from "js-cookie";
 import api from "../utils/api";
+import NicknameDecorationPreview from "../components/common/NicknameDecorationPreview";
+
 
 const NicknameDecorationShop = () => {
     const [cart, setCart] = useState([]);
@@ -65,6 +67,7 @@ const NicknameDecorationShop = () => {
     }, [shopItems]);
 
     const categories = useMemo(() => Object.keys(categorizedItems), [categorizedItems]);
+
     const toggleEffect = (item) => {
         setSelectedEffects(prev => {
             const newEffects = { ...prev };
@@ -75,6 +78,10 @@ const NicknameDecorationShop = () => {
             }
             return newEffects;
         });
+    };
+
+    const getSelectedItems = () => {
+        return shopItems.filter(item => selectedEffects[item.type] === item.id);
     };
 
     const addToCart = (item) => {
@@ -91,7 +98,7 @@ const NicknameDecorationShop = () => {
             alert('로그인이 필요합니다.');
             return;
         }
-
+        fetchUserPoints();
         const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
         console.log("User Points:", userPoints, "Total Price:", totalPrice);
         if (totalPrice > userPoints) {
@@ -134,49 +141,6 @@ const NicknameDecorationShop = () => {
         }
     };
 
-
-    const getPreviewStyle = () => {
-        return shopItems
-            .filter(item => selectedEffects[item.type] === item.id)
-            .reduce((style, item) => {
-                if (item.style && typeof item.style === 'object') {
-                    const itemStyle = item.style.previewStyle || item.style;
-                    return { ...style, ...itemStyle };
-                }
-                return style;
-            }, {});
-    };
-
-
-    const getPreviewClass = () => {
-        return shopItems
-            .filter(item => selectedEffects[item.type] === item.id)
-            .map(item => item.style && item.style.previewClass)
-            .filter(Boolean)
-            .join(' ');
-    };
-
-    const getPreviewContent = () => {
-        const contents = shopItems
-            .filter(item => selectedEffects[item.type] === item.id)
-            .map(item => item.style && item.style.previewContent)
-            .filter(Boolean);
-
-        return contents.map((content, index) => {
-            if (typeof content === 'string' && content.startsWith('<svg')) {
-                return (
-                    <span key={index} className="nickname-container">
-                    <span>{nickname}</span>
-                    <span dangerouslySetInnerHTML={{ __html: content }} />
-                </span>
-                );
-            }
-            return <span key={index}>{content}</span>;
-        });
-    };
-
-
-
     if (loading) {
         return <LoadingSpinner />;
     }
@@ -189,29 +153,10 @@ const NicknameDecorationShop = () => {
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">포인트 상점</h1>
 
-            <div className="mb-4">
-                <label htmlFor="nickname" className="block text-sm font-medium text-gray-300 mb-2">예제</label>
-                <input
-                    type="text"
-                    id="nickname"
-                    value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
-                    className="bg-gray-700 text-white px-3 py-2 rounded-md w-full"
-                />
-            </div>
-
-            <div className="mb-4">
-                <h2 className="text-xl font-bold mb-2">미리보기</h2>
-                <div className="bg-gray-800 p-4 rounded-lg text-center">
-                    <span
-                        className={`text-2xl font-bold ${getPreviewClass()}`}
-                        style={getPreviewStyle()}
-                        data-text={nickname}
-                    >
-                        {getPreviewContent()}{nickname}
-                    </span>
-                </div>
-            </div>
+            <NicknameDecorationPreview
+                selectedItems={getSelectedItems()}
+                initialNickname={nickname}
+            />
 
             <div className="mb-4">
                 <div className="flex border-b border-gray-700">

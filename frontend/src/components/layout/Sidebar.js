@@ -97,7 +97,7 @@ function Sidebar({ isOpen, setIsOpen, toggleChat }) {
         {path: '/bet', label: '포인트'},
         // {path: '/chatRoom', label: '채팅방'},
         {path: '/saveGame', label: '게임저장'},
-        {path: '/shop', label: '포인트샵'},
+        {path: '/shop', label: '포인트샵'}
     ];
 
     const handleTestButtonClick = () => {
@@ -128,10 +128,12 @@ function Sidebar({ isOpen, setIsOpen, toggleChat }) {
             return (
                 <>
                     <div className="text-center mb-2">
-                        {userNickname && (
-                            <DecoratedNickname nickname={userNickname} />
-                        )}
-                        <p className="mt-1">포인트: {userPoints}</p>
+                        <Link to="/myPage" className="block hover:opacity-80 transition-opacity">
+                            {userNickname && (
+                                <DecoratedNickname nickname={userNickname}/>
+                            )}
+                            <p className="mt-1">포인트: {userPoints}</p>
+                        </Link>
                     </div>
                     <Button
                         onClick={handleLogout}
