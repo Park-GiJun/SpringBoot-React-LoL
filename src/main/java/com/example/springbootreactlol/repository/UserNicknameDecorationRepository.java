@@ -1,6 +1,7 @@
 package com.example.springbootreactlol.repository;
 
 import com.example.springbootreactlol.entity.NicknameStyle;
+import com.example.springbootreactlol.entity.User;
 import com.example.springbootreactlol.entity.UserNicknameDecoration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,7 +15,14 @@ public interface UserNicknameDecorationRepository extends JpaRepository<UserNick
     @Query(value = "SELECT * FROM user_nickname_decoration d WHERE d.nickname = (SELECT username FROM users WHERE nick_name = :nickname LIMIT 1)", nativeQuery = true  )
     List<UserNicknameDecoration> findAllByNickname(String nickname);
 
+    List<UserNicknameDecoration> findByNickname(String nickname);
+
+    UserNicknameDecoration findByNicknameAndId(String nickname, NicknameStyle id);
+
     @Modifying
     @Query("UPDATE UserNicknameDecoration u SET u.useFlag = false WHERE u.nickname = :nickname AND u.type = :type AND u.useFlag = true")
     void updateUseFlagForExistingDecorations(@Param("nickname") String nickname, @Param("type") NicknameStyle.StyleType type);
+
+    @Query(value = "SELECT * FROM user_nickname_decoration d WHERE d.nickname = :user AND d.id IN (:decorationIds)", nativeQuery = true )
+    List<UserNicknameDecoration> findByNicknameAndIdIn(String user, List  <Long> decorationIds);
 }

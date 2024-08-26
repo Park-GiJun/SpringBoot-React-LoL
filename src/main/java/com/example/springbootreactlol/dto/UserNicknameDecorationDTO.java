@@ -13,8 +13,6 @@ public class UserNicknameDecorationDTO {
     private Boolean useFlag;
     private NicknameStyleDTO style;
 
-    // getters and setters
-
     public static UserNicknameDecorationDTO fromEntity(UserNicknameDecoration entity) {
         UserNicknameDecorationDTO dto = new UserNicknameDecorationDTO();
         dto.setId(entity.getId());

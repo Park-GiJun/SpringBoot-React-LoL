@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
+import LoadingSpinner from "../components/common/Loading";
 import Cookies from "js-cookie";
-import DecoratedNickname from "../components/common/DecorateNickname";
+import NicknameDecorationPreview from "../components/common/NicknameDecorationPreview";
 
 const MyPage = () => {
     const [decorations, setDecorations] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [nickname, setNickname] = useState('');
-    const [message, setMessage] = useState(null);
+    const [activeCategory, setActiveCategory] = useState('ALL');
+    const [selectedEffects, setSelectedEffects] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         fetchUserData();
@@ -16,83 +19,153 @@ const MyPage = () => {
     const fetchUserData = async () => {
         try {
             const token = Cookies.get('token');
-            const response = await axios.get('http://15.165.163.233:9832/api/user/decorations', {
-                headers: { Authorization: `Bearer ${token}` }
+            const response = await axios.post('http://15.165.163.233:9832/api/user/decorations', {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             });
-            setDecorations(response.data.decorations);
-            setNickname(response.data.nickname);
+
+            if (response.data && Array.isArray(response.data)) {
+                const processedDecorations = response.data.map(item => ({
+                    id: item.id,
+                    name: item.style.name,
+                    type: item.type.toLowerCase(),
+                    description: item.style.description,
+                    useFlag: item.useFlag,
+                    style: JSON.parse(item.style.style)
+                }));
+                setDecorations(processedDecorations);
+                setSelectedEffects(processedDecorations.reduce((acc, item) => {
+                    if (item.useFlag) {
+                        acc[item.type] = item.id;
+                    }
+                    return acc;
+                }, {}));
+                if (response.data.length > 0) {
+                    setNickname(response.data[0].nickname);
+                }
+            } else {
+                throw new Error('Invalid data structure received from server');
+            }
             setLoading(false);
-        } catch (error) {
-            console.error('Failed to fetch user data:', error);
-            setMessage({ type: 'error', content: '사용자 데이터를 불러오는데 실패했습니다.' });
+        } catch (err) {
+            console.error("Error fetching user data:", err);
+            setError("Failed to load user data. Please try again later.");
             setLoading(false);
         }
     };
 
-    const toggleDecoration = async (id, currentUseFlag) => {
-        try {
-            const token = Cookies.get('token');
-            await axios.put(`http://15.165.163.233:9832/api/user/decorations/${id}`,
-                { useFlag: !currentUseFlag },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+    const categorizedItems = useMemo(() => {
+        return decorations.reduce((acc, item) => {
+            if (!acc[item.type]) {
+                acc[item.type] = [];
+            }
+            acc[item.type].push(item);
+            return acc;
+        }, { ALL: decorations });
+    }, [decorations]);
 
-            setDecorations(prevDecorations =>
-                prevDecorations.map(decoration =>
-                    decoration.id === id
-                        ? {...decoration, useFlag: !currentUseFlag}
-                        : decoration
-                )
-            );
+    const categories = useMemo(() => ['ALL', ...Object.keys(categorizedItems).filter(cat => cat !== 'ALL')], [categorizedItems]);
 
-            setMessage({ type: 'success', content: '장식 설정이 변경되었습니다.' });
-        } catch (error) {
-            console.error('Failed to toggle decoration:', error);
-            setMessage({ type: 'error', content: '장식 설정 변경에 실패했습니다.' });
+    const toggleEffect = async (item) => {
+        const newSelectedEffects = { ...selectedEffects };
+        if (newSelectedEffects[item.type] === item.id) {
+            delete newSelectedEffects[item.type];
+        } else {
+            newSelectedEffects[item.type] = item.id;
         }
+
+        setSelectedEffects(newSelectedEffects);
+
+        const updatedDecorations = decorations.map(decoration => ({
+            ...decoration,
+            useFlag: newSelectedEffects[decoration.type] === decoration.id
+        }));
+
+        setDecorations(updatedDecorations);
+
+        try {
+            await sendUpdatedEffectsToServer(updatedDecorations);
+        } catch (error) {
+            console.error('Failed to update decorations on server:', error);
+        }
+    };
+
+    const sendUpdatedEffectsToServer = async (updatedDecorations) => {
+        const token = Cookies.get('token');
+        if (!token) {
+            throw new Error('No authentication token found');
+        }
+
+        const updatedEffects = updatedDecorations.map(decoration => ({
+            id: decoration.id,
+            useFlag: decoration.useFlag
+        }));
+
+        await axios.put('http://15.165.163.233:9832/api/user/update-decoration',
+            { decorations: updatedEffects },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+    };
+
+    const getSelectedItems = () => {
+        return decorations.filter(item => selectedEffects[item.type] === item.id);
     };
 
     if (loading) {
-        return <div className="text-center">로딩 중...</div>;
+        return <LoadingSpinner />;
+    }
+
+    if (error) {
+        return <div className="text-center p-4 text-red-500">{error}</div>;
     }
 
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">마이페이지</h1>
 
-            {message && (
-                <div className={`p-4 mb-4 rounded ${message.type === 'error' ? 'bg-red-500' : 'bg-green-500'}`}>
-                    {message.content}
-                </div>
-            )}
+            <NicknameDecorationPreview
+                selectedItems={getSelectedItems()}
+                initialNickname={nickname}
+            />
 
-            <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">현재 닉네임 미리보기</h2>
-                <DecoratedNickname nickname={nickname} />
-            </div>
-
-            <div>
-                <h2 className="text-xl font-semibold mb-2">보유 중인 장식</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {decorations.map(decoration => (
-                        <div key={decoration.id} className="bg-gray-800 p-4 rounded-lg">
-                            <div className="flex justify-between items-center mb-2">
-                                <span className="font-medium">{decoration.name}</span>
-                                <label className="relative inline-flex items-center cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        className="sr-only peer"
-                                        checked={decoration.useFlag}
-                                        onChange={() => toggleDecoration(decoration.id, decoration.useFlag)}
-                                    />
-                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                                </label>
-                            </div>
-                            <p className="text-sm text-gray-400">{decoration.description}</p>
-                            <p className="text-sm text-gray-400 mt-1">타입: {decoration.type}</p>
-                        </div>
+            <div className="mb-4">
+                <div className="flex border-b border-gray-700">
+                    {categories.map(category => (
+                        <button
+                            key={category}
+                            className={`py-2 px-4 font-semibold ${activeCategory === category ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400'}`}
+                            onClick={() => setActiveCategory(category)}
+                        >
+                            {category.charAt(0).toUpperCase() + category.slice(1)}
+                        </button>
                     ))}
                 </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {categorizedItems[activeCategory]?.map(item => (
+                    <div key={item.id} className="border rounded-lg p-4 flex flex-col justify-between bg-gray-800">
+                        <div>
+                            <h2 className="text-lg font-semibold">{item.name}</h2>
+                            <p className="text-gray-400">{item.description}</p>
+                        </div>
+                        <div className="mt-4 flex justify-between items-center">
+                            <button
+                                onClick={() => toggleEffect(item)}
+                                className={`px-4 py-2 rounded ${selectedEffects[item.type] === item.id ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-200'}`}
+                            >
+                                {selectedEffects[item.type] === item.id ? '사용 중' : '사용하기'}
+                            </button>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     );
