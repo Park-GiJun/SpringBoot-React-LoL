@@ -3,7 +3,7 @@ import DecoratedNickname from "./DecorateNickname";
 
 function RecentGames({ recentGames }) {
     return (
-        <div className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow md:col-span-2 lg:col-span-4 max-h-[85vh] overflow-y-auto">
+        <div className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow md:col-span-2 lg:col-span-5 max-h-[85vh] overflow-y-auto">
             {recentGames.length > 0 ? (
                 Object.entries(recentGames.reduce((acc, game) => {
                     if (!acc[game.matchCode]) {

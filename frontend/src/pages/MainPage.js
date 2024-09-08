@@ -80,7 +80,7 @@ function MainPage() {
     }
 
     return (
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 p-2">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-5 p-2">
             <div className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow max-h-[40vh] flex flex-col">
                 <h2 className="text-lg sm:text-xl font-bold mb-2">공지사항</h2>
                 <ul className="list-disc pl-5 overflow-y-auto flex-grow">
@@ -117,7 +117,7 @@ function MainPage() {
                 )}
             </div>
 
-            <div className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow max-h-[40vh] flex flex-col">
+            <div className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow max-h-[40vh] flex flex-col md:col-span-2 lg:col-span-2">
                 <h2 className="text-lg sm:text-xl font-bold mb-2 text-center">랭킹</h2>
                 {rankings.length > 0 ? (
                     <div className="overflow-y-auto flex-grow text-center">
@@ -128,7 +128,7 @@ function MainPage() {
                             <SortableHeader label="승률" sortKey="winningPercentage"/>
                             <SortableHeader label="챔피언" sortKey="mostChampion"/>
                             <SortableHeader label="포지션" sortKey="mostPosition"/>
-                            <SortableHeader label="게임 수" sortKey="playedGames"/>
+                            <SortableHeader label="게임" sortKey="playedGames"/>
                         </div>
                         {rankings.map((stat, index) => (
                             <div key={index}
@@ -150,7 +150,8 @@ function MainPage() {
                 )}
             </div>
 
-            <div className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow max-h-[40vh] flex flex-col">
+            <div
+                className="bg-gray-800 p-2 sm:p-4 rounded-lg shadow max-h-[40vh] flex flex-col md:col-span-2 lg:col-span-1">
                 <h2 className="text-lg sm:text-xl font-bold mb-2 text-center">통계</h2>
                 {statistics ? (
                     <div className="grid grid-cols-2 gap-1 sm:gap-2 text-center overflow-y-auto">
