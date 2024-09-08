@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const LoLMatchSummary = () => {
     const [blueTeam, setBlueTeam] = useState([]);
@@ -7,7 +8,7 @@ const LoLMatchSummary = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [expandedPlayer, setExpandedPlayer] = useState(null);
 
-    const positions = ['TOP', 'JUNGLE', 'MID', 'ADC', 'SUPPORT'];
+    const positions = ['TOP', 'JUNGLE', 'MIDDLE', 'BOTTOM', 'UTILITY'];
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
@@ -42,7 +43,7 @@ const LoLMatchSummary = () => {
         if (index > 0) {
             const newTeam = [...team];
             [newTeam[index - 1], newTeam[index]] = [newTeam[index], newTeam[index - 1]];
-            setTeam(assignPositions(newTeam));
+            setTeam(newTeam);
         }
     };
 
@@ -50,7 +51,24 @@ const LoLMatchSummary = () => {
         if (index < team.length - 1) {
             const newTeam = [...team];
             [newTeam[index + 1], newTeam[index]] = [newTeam[index], newTeam[index + 1]];
-            setTeam(assignPositions(newTeam));
+            setTeam(newTeam);
+        }
+    };
+
+    const saveMatchData = async () => {
+        try {
+            const allPlayers = [...blueTeam, ...redTeam].map(player => ({
+                ...player,
+                TEAM_POSITION: player.ASSIGNED_POSITION
+            }));
+
+            console.log(allPlayers);
+
+            const response = await axios.post('http://localhost:9832/public/testSave', { participants: allPlayers });
+            console.log('Data saved successfully:', response.data);
+        } catch (error) {
+            console.error('Error saving data:', error);
+            setError('데이터 저장 중 오류가 발생했습니다.');
         }
     };
 
@@ -159,6 +177,12 @@ const LoLMatchSummary = () => {
                         </>
                     )}
                     {activeTab === 'players' && renderPlayers()}
+                    <button
+                        onClick={saveMatchData}
+                        className="mt-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition duration-300"
+                    >
+                        매치 데이터 저장
+                    </button>
                 </div>
             )}
         </div>

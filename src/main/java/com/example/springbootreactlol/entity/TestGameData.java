@@ -1,8 +1,6 @@
 package com.example.springbootreactlol.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,8 +11,10 @@ import lombok.Setter;
 public class TestGameData {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String gameId;
     private String name;
     private String skin;
     private String team;
@@ -50,4 +50,12 @@ public class TestGameData {
     private Integer item4;
     private Integer item5;
     private Integer item6;
+
+    private Integer exp;
+    private Integer hqKilled;
+    private Integer sightWardsBoughtInGame;
+    private Integer visionWardsBoughtInGame;
+
+    @Column(name = "match_code")
+    private String matchCode;
 }

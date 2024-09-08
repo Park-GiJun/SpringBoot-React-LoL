@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -416,4 +418,73 @@ code {
 
 .rainbow-pulse {
   animation: rainbow-pulse 2s linear infinite;
+}
+
+
+/* 파도 애니메이션 */
+@keyframes wave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.wave-animation {
+  animation: wave 2s ease-in-out infinite;
+}
+
+/* 네온 펄스 */
+@keyframes neonPulse {
+  from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff00de, 0 0 35px #ff00de, 0 0 40px #ff00de; }
+  to { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de; }
+}
+.neon-pulse {
+  animation: neonPulse 1.5s ease-in-out infinite alternate;
+}
+
+/* 오로라 테두리 */
+.aurora-border {
+  box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de, 0 0 100px #ff00de, 0 0 150px #ff00de;
+}
+
+/* 크리스탈 테두리 */
+.crystal-border {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  backdrop-filter: blur(5px);
+}
+
+/* 홀로그램 색상 */
+.hologram-color {
+  background: linear-gradient(45deg, #f3ec78, #af4261);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 갤럭시 색상 */
+.galaxy-color {
+  background: linear-gradient(to right, #434343 0%, black 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 사이버펑크 폰트 */
+.cyberpunk-font {
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 2px;
+}
+
+/* 중세 고딕 폰트 */
+.medieval-gothic-font {
+  font-family: 'UnifrakturMaguntia', cursive;
+  letter-spacing: 1px;
+}
+
+/* 다이아몬드 아이콘 */
+.diamond-icon::after {
+  content: '💎';
+  margin-left: 5px;
+}
+
+/* 용 아이콘 */
+.dragon-icon::after {
+  content: '🐉';
+  margin-left: 5px;
 }
